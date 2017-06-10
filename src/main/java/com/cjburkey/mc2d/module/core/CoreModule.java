@@ -1,19 +1,25 @@
 package com.cjburkey.mc2d.module.core;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.input.Input;
+import com.cjburkey.mc2d.object.GameObject;
+import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.render.Renderer;
 
 public class CoreModule extends ICoreModule {
 	
 	private final Input input;
 	private final Renderer renderer;
+	private final Queue<GameObject> gameObjs;
 	
 	public CoreModule() {
 		input = new Input();
 		renderer = new Renderer();
+		gameObjs = new ConcurrentLinkedQueue<>();
 	}
 	
 	public String getName() {
@@ -52,17 +58,39 @@ public class CoreModule extends ICoreModule {
 		
 	}
 	
+	// TODO: FIX TRANSFORMATION PROBABLY
 	public void onRenderInit() {
+		GameObject tri;
+		gameObjs.add(tri = new GameObject(new Mesh(new float[] {
+				-0.5f, 0.5f, -1.0f,
+				-0.5f, -0.5f, -1.0f,
+				0.5f, -0.5f, -1.0f,
+				0.5f, 0.5f, -1.0f
+		}, new float[] {
+				0.5f, 0.0f, 0.0f,
+				0.0f, 0.5f, 0.0f,
+				0.0f, 0.0f, 0.5f,
+				0.0f, 0.5f, 0.5f
+		}, new int[] {
+				0, 1, 3, 3, 1, 2
+		})));
+		tri.init();
+		
 		input.renderInit();
 		renderer.init();
 		GLFW.glfwFocusWindow(MC2D.INSTANCE.getWindow().getWindow());
 	}
 	
 	public void onRenderUpdate() {
-		renderer.render();
+		renderer.render(gameObjs.toArray(new GameObject[gameObjs.size()]));
 	}
 	
 	public void onRenderCleanup() {
+		for(GameObject obj : gameObjs) {
+			if(obj != null) {
+				obj.cleanup();
+			}
+		}
 		renderer.cleanup();
 	}
 	

@@ -1,15 +1,23 @@
 package com.cjburkey.mc2d.render;
 
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 import com.cjburkey.mc2d.MC2D;
 
 public class ShaderProgram {
+	
+	private final Map<String, Integer> uniforms;
 	
 	private final int programId;
 	private int vertexShaderId;
 	private int fragmentShaderId;
 
 	public ShaderProgram() {
+		uniforms = new HashMap<>();
 		programId = GL20.glCreateProgram();
 		if(programId == 0) {
 			MC2D.getLogger().err("Could not create Shader");
@@ -23,6 +31,23 @@ public class ShaderProgram {
 
 	public void createFragmentShader(String shaderCode) {
 		fragmentShaderId = createShader(shaderCode, GL20.GL_FRAGMENT_SHADER);
+	}
+	
+	public void createUniform(String name) {
+		int location = GL20.glGetUniformLocation(programId, name);
+		if(location < 0) {
+			MC2D.getLogger().err("Couldn't find uniform: " + name);
+			MC2D.INSTANCE.stopGame();
+		}
+		uniforms.put(name, location);
+	}
+	
+	public void setUniform(String name, Matrix4f value) {
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer buff = stack.mallocFloat(16);
+			value.get(buff);
+			GL20.glUniformMatrix4fv(uniforms.get(name), false, buff);
+		}
 	}
 
 	protected int createShader(String shaderCode, int shaderType) {

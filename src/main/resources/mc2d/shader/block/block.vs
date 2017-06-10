@@ -5,7 +5,10 @@ layout (location = 1) in vec3 inColor;
 
 out vec3 color;
 
+uniform mat4 worldMatrix;
+uniform mat4 projectionMatrix;
+
 void main() {
-	gl_Position = vec4(position, 1.0);
+	gl_Position = worldMatrix * projectionMatrix * vec4(position, 1.0);
 	color = inColor;
 }

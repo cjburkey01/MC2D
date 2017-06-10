@@ -31,9 +31,6 @@ public class GLFWWindow {
 		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL11.GL_TRUE);
 		
 		window = GLFW.glfwCreateWindow(10, 10, "MC2D", MemoryUtil.NULL, MemoryUtil.NULL);
-		setTitle("MC2D v" + MC2D.VERSION);
-		setWindowSize(getMonitorSize().x / 2, getMonitorSize().y / 2);
-		centerOnScreen();
 		if(window == MemoryUtil.NULL) {
 			System.err.println("Couldn't create GLFW window.");
 		}
@@ -55,9 +52,13 @@ public class GLFWWindow {
 		size.x = width;
 		size.y = height;
 		GLFW.glfwSetWindowSize(window, size.x, size.y);
+		GL11.glViewport(0, 0, size.x, size.y);
 	}
 	
 	public void show() {
+		setTitle("MC2D v" + MC2D.VERSION);
+		setWindowSize(getMonitorSize().x / 2, getMonitorSize().y / 2);
+		centerOnScreen();
 		GLFW.glfwShowWindow(window);
 	}
 	
@@ -71,6 +72,10 @@ public class GLFWWindow {
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();
 		GLFW.glfwSetErrorCallback(null).free();
+	}
+	
+	public Vector2i getWindowSize() {
+		return new Vector2i(size);
 	}
 	
 	public Vector2i getMonitorSize() {
