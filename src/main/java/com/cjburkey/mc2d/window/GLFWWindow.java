@@ -39,6 +39,7 @@ public class GLFWWindow {
 		
 		GLFW.glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GLFW.glfwSwapInterval(1);
 		GLFW.glfwSwapBuffers(window);
 	}

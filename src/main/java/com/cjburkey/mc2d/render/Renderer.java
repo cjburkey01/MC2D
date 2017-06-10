@@ -1,5 +1,6 @@
 package com.cjburkey.mc2d.render;
 
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.core.Utils;
@@ -8,10 +9,6 @@ import com.cjburkey.mc2d.object.Transformation;
 import com.cjburkey.mc2d.window.GLFWWindow;
 
 public class Renderer {
-	
-	private static final float FOV = (float) Math.toRadians(90.0d);
-	private static final float NEAR_CLIP = 0.01f;
-	private static final float FAR_CLIP = 1000.0f;
 
 	private ShaderProgram blockShader;
 	private final Transformation transform;
@@ -30,15 +27,24 @@ public class Renderer {
 		blockShader.createUniform("worldMatrix");
 	}
 	
+	private int x = 0;
 	public void render(GameObject[] objs) {
+		x ++;
+		if(x >= 360) {
+			x = 0;
+		}
 		clear();
 		GLFWWindow window = MC2D.INSTANCE.getWindow();
 		blockShader.bind();
 		
-		blockShader.setUniform("projectionMatrix", transform.getProjectionMatrix(FOV, window.getWindowSize().x, window.getWindowSize().y, NEAR_CLIP, FAR_CLIP));
+		Matrix4f projectionMatrix = transform.getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
+		blockShader.setUniform("projectionMatrix", projectionMatrix);
 		for(GameObject obj : objs) {
-			blockShader.setUniform("worldMatrix", transform.getWorldMatrix(obj.getPosition(), obj.getRotation(), obj.getScale()));
-			obj.render();
+			obj.setRotation(x, x, x);
+			System.out.println(x);
+			Matrix4f worldMatrix = transform.getWorldMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
+			blockShader.setUniform("worldMatrix", worldMatrix);
+			obj.getMesh().render();
 		}
 		
 		ShaderProgram.unbind();
