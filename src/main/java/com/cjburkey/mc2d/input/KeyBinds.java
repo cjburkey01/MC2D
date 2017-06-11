@@ -19,4 +19,16 @@ public final class KeyBinds {
 		return val;
 	}
 	
+	public static boolean keyPressed(Input i, String key) {
+		return i.keyPressed(getKeyBound(key));
+	}
+	
+	public static boolean keyReleased(Input i, String key) {
+		return i.keyReleased(getKeyBound(key));
+	}
+	
+	public static boolean keyHeld(Input i, String key) {
+		return i.keyHeld(getKeyBound(key));
+	}
+	
 }

@@ -72,7 +72,7 @@ public final class TextureAtlas {
 	
 	private void addBlockToAtlas(int x, int y, IBlock block, BufferedImage atlas) {
 		BufferedImage blockImg = loadImageForBlock(block);
-		if(blockImg.getWidth() == imgSize && blockImg.getHeight() == imgSize) {
+		if(blockImg != null && blockImg.getWidth() == imgSize && blockImg.getHeight() == imgSize) {
 			Graphics2D g = atlas.createGraphics();
 			g.drawImage(blockImg, x * imgSize, y * imgSize, null);
 			textures[x][y] = block;

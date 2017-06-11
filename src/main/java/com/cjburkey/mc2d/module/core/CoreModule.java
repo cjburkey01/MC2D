@@ -8,6 +8,8 @@ import com.cjburkey.mc2d.chunk.ChunkData;
 import com.cjburkey.mc2d.chunk.MeshChunk;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.input.Input;
+import com.cjburkey.mc2d.input.KeyBinds;
+import com.cjburkey.mc2d.object.CameraController;
 import com.cjburkey.mc2d.object.GameObject;
 import com.cjburkey.mc2d.render.Renderer;
 import com.cjburkey.mc2d.render.TextureAtlas;
@@ -20,6 +22,7 @@ public final class CoreModule extends ICoreModule {
 	private final Renderer renderer;
 	private final Queue<GameObject> gameObjs;
 	private final TextureAtlas atlas;
+	private final CameraController camControl;
 	
 	public CoreModule() {
 		instance = this;
@@ -27,6 +30,7 @@ public final class CoreModule extends ICoreModule {
 		renderer = new Renderer();
 		gameObjs = new ConcurrentLinkedQueue<>();
 		atlas = new TextureAtlas();
+		camControl = new CameraController(renderer.getCamera());
 	}
 	
 	public String getName() {
@@ -50,12 +54,31 @@ public final class CoreModule extends ICoreModule {
 	}
 	
 	public void onLogicInit() {
-		
+		KeyBinds.addKeyBind("left", GLFW.GLFW_KEY_A);
+		KeyBinds.addKeyBind("right", GLFW.GLFW_KEY_D);
+		KeyBinds.addKeyBind("up", GLFW.GLFW_KEY_W);
+		KeyBinds.addKeyBind("down", GLFW.GLFW_KEY_S);
 	}
 	
 	public void onLogicTick() {
 		if(input.keyPressed(GLFW.GLFW_KEY_ESCAPE)) {
 			MC2D.INSTANCE.stopGame();
+		}
+		
+		if(KeyBinds.keyHeld(input, "left")) {
+			camControl.left();
+		}
+		
+		if(KeyBinds.keyHeld(input, "right")) {
+			camControl.right();
+		}
+		
+		if(KeyBinds.keyHeld(input, "up")) {
+			camControl.up();
+		}
+		
+		if(KeyBinds.keyHeld(input, "down")) {
+			camControl.down();
 		}
 		
 		input.tick();

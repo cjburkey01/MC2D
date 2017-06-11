@@ -33,7 +33,7 @@ public final class MeshChunk {
 	}
 	
 	private static void addBlock(IBlock block, int x, int y, List<Vector3f> verts, List<Vector2f> uvs, List<Integer> tris, TextureAtlas atlas) {
-		final boolean rev = false;
+		final boolean rev = true;
 		final int index = verts.size();
 		Vector3f corner = new Vector3f(x, y, 0.0f);
 		
@@ -43,8 +43,8 @@ public final class MeshChunk {
 		Vector3f i3 = new Vector3f();
 		
 		i0.add(corner);
-		i1.add(corner).add(new Vector3f(0.0f, 1.0f, 0.0f));
-		i2.add(corner).add(new Vector3f(1.0f, 1.0f, 0.0f));
+		i1.add(corner).add(new Vector3f(0.0f, -1.0f, 0.0f));
+		i2.add(corner).add(new Vector3f(1.0f, -1.0f, 0.0f));
 		i3.add(corner).add(new Vector3f(1.0f, 0.0f, 0.0f));
 		
 		verts.add(i0);

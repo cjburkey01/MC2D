@@ -14,8 +14,15 @@ public final class ChunkData {
 		blocks = new IBlock[chunkSize][chunkSize];
 		for(int x = 0; x < chunkSize; x ++) {
 			for(int y = 0; y < chunkSize; y ++) {
-				if(ThreadLocalRandom.current().nextInt(0, 2) == 1) {
-					setBlock(x, y, Blocks.blockBasic);
+				int rand = ThreadLocalRandom.current().nextInt(0, 3);
+				if(rand == 0) {
+					setBlock(x, y, Blocks.blockStone);
+				} else if(rand == 1 || rand == 2) {
+					if(y == chunkSize - 1) {
+						setBlock(x, y, Blocks.blockGrass);
+					} else {
+						setBlock(x, y, Blocks.blockDirt);
+					}
 				}
 			}
 		}

@@ -7,12 +7,18 @@ public final class Blocks {
 	
 	private static final List<IBlock> blocks = new ArrayList<IBlock>();
 	
-	public static IBlock blockBasic;
+	public static IBlock blockStone;
+	public static IBlock blockDirt;
+	public static IBlock blockGrass;
 	
 	public static void loadBlocks() {
-		blockBasic = new BlockBasic("block_stone");
+		blockStone = new BlockBasic("block_stone");
+		blockDirt = new BlockBasic("block_dirt");
+		blockGrass = new BlockBasic("block_grass");
 		
-		blocks.add(blockBasic);
+		blocks.add(blockStone);
+		blocks.add(blockDirt);
+		blocks.add(blockGrass);
 	}
 	
 	public static IBlock[] getBlocks() {
