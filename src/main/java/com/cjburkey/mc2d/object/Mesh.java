@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 import com.cjburkey.mc2d.render.Texture;
 
-public class Mesh {
+public final class Mesh {
 	
 	private final int vertCount;
 	private final float[] verts;

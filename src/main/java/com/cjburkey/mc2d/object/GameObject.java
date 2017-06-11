@@ -2,7 +2,7 @@ package com.cjburkey.mc2d.object;
 
 import org.joml.Vector3f;
 
-public class GameObject {
+public final class GameObject {
 	
 	private final Mesh mesh;
 	private final Vector3f position;

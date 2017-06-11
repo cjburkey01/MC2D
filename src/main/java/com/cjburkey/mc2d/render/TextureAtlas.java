@@ -11,7 +11,7 @@ import com.cjburkey.mc2d.block.IBlock;
 import com.cjburkey.mc2d.core.Resource;
 import com.cjburkey.mc2d.io.IO;
 
-public class TextureAtlas {
+public final class TextureAtlas {
 	
 	private static final int imgSize = 16;
 	private IBlock[][] textures;
@@ -83,7 +83,10 @@ public class TextureAtlas {
 		try {
 			ImageIO.write(img, "png", tmpFile);
 			texture = new Texture(tmpFile);
-			Renderer.instance.runLater(() -> texture.load());
+			Renderer.instance.runLater(() -> {
+				texture.load();
+				tmpFile.delete();
+			});
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

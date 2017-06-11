@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
 
-public class Input {
+public final class Input {
 
 	private final Map<Integer, Boolean> toAdd = new ConcurrentHashMap<>();
 	private final Map<Integer, Boolean> current = new ConcurrentHashMap<>();

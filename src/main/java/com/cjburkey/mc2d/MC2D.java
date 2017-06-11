@@ -11,7 +11,7 @@ import com.cjburkey.mc2d.module.core.ICoreModule;
 import com.cjburkey.mc2d.module.core.ModuleHandler;
 import com.cjburkey.mc2d.window.GLFWWindow;
 
-public class MC2D {
+public final class MC2D {
 	
 	public static final SemVer VERSION = new SemVer(0, 0, 1);
 	public static final MC2D INSTANCE = new MC2D();

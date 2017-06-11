@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 import com.cjburkey.mc2d.MC2D;
 
-public class ShaderProgram {
+public final class ShaderProgram {
 	
 	private final Map<String, Integer> uniforms;
 	

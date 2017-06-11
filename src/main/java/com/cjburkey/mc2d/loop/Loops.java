@@ -1,6 +1,6 @@
 package com.cjburkey.mc2d.loop;
 
-public class Loops {
+public final class Loops {
 	
 	public int FPS, UPS;
 	

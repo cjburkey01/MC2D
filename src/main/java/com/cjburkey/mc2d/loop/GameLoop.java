@@ -1,6 +1,6 @@
 package com.cjburkey.mc2d.loop;
 
-public class GameLoop implements ILoop {
+public final class GameLoop implements ILoop {
 	
 	private final double BETWEEN_TICKS;
 	private final Thread thread;

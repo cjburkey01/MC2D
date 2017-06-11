@@ -10,18 +10,20 @@ import com.cjburkey.mc2d.object.GameObject;
 import com.cjburkey.mc2d.object.Transformation;
 import com.cjburkey.mc2d.window.GLFWWindow;
 
-public class Renderer {
+public final class Renderer {
 	
 	public static Renderer instance;
 	
 	private final Queue<Runnable> doLater;
 	private ShaderProgram blockShader;
 	private final Transformation transform;
+	private final Camera camera;
 	
 	public Renderer() {
 		instance = this;
 		doLater = new ConcurrentLinkedQueue<>();
 		transform = new Transformation();
+		camera = new Camera();
 	}
 	
 	public void init() {
@@ -31,7 +33,7 @@ public class Renderer {
 		blockShader.link();
 		
 		blockShader.createUniform("projectionMatrix");
-		blockShader.createUniform("worldMatrix");
+		blockShader.createUniform("modelViewMatrix");
 		blockShader.createUniform("texture_sampler");
 	}
 	
@@ -40,6 +42,7 @@ public class Renderer {
 		GLFWWindow window = MC2D.INSTANCE.getWindow();
 		blockShader.bind();
 		
+		Matrix4f viewMatrix = transform.getViewMatrix(camera);
 		Matrix4f projectionMatrix = transform.getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
 		blockShader.setUniform("projectionMatrix", projectionMatrix);
 		blockShader.setUniform("texture_sampler", 0);
@@ -47,8 +50,8 @@ public class Renderer {
 			if(!obj.getMesh().isMeshBuilt()) {
 				obj.getMesh().buildMesh();
 			}
-			Matrix4f worldMatrix = transform.getWorldMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
-			blockShader.setUniform("worldMatrix", worldMatrix);
+			Matrix4f modelViewMatrix = transform.getModelViewMatrix(obj, viewMatrix);
+			blockShader.setUniform("modelViewMatrix", modelViewMatrix);
 			obj.getMesh().render();
 		}
 		

@@ -2,7 +2,7 @@ package com.cjburkey.mc2d.loop;
 
 import com.cjburkey.mc2d.MC2D;
 
-public class RenderLoop implements ILoop {
+public final class RenderLoop implements ILoop {
 	
 	private Runnable onInit;
 	private Runnable onTick;

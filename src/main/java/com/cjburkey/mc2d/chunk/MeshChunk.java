@@ -10,7 +10,7 @@ import com.cjburkey.mc2d.core.Utils;
 import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.render.TextureAtlas;
 
-public class MeshChunk {
+public final class MeshChunk {
 	
 	public static final float blockSize = 1.0f;
 	

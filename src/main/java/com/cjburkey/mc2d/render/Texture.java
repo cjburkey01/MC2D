@@ -12,7 +12,7 @@ import com.cjburkey.mc2d.core.Resource;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
-public class Texture {
+public final class Texture {
 	
 	private PNGDecoder png;
 	private boolean isLoaded = false;

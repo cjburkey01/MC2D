@@ -3,7 +3,7 @@ package com.cjburkey.mc2d.core;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-public class Logger {
+public final class Logger {
 	
 	private final PrintStream out;
 	private final PrintStream err;

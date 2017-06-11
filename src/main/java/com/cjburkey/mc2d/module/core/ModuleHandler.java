@@ -7,7 +7,7 @@ import org.reflections.Reflections;
 import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.core.SemVer;
 
-public class ModuleHandler<T extends ICoreModule> {
+public final class ModuleHandler<T extends ICoreModule> {
 	
 	private final List<T> modules = new ArrayList<T>();
 	private final EventHandler events = new EventHandler();

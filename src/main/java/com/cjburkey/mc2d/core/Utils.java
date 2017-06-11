@@ -10,7 +10,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import com.cjburkey.mc2d.MC2D;
 
-public class Utils {
+public final class Utils {
 	
 	private static final char NEWLINE = '\n';
 	

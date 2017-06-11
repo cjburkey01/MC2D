@@ -2,7 +2,7 @@ package com.cjburkey.mc2d.core;
 
 import org.joml.Vector3i;
 
-public class SemVer {
+public final class SemVer {
 	
 	private final Vector3i version;
 	

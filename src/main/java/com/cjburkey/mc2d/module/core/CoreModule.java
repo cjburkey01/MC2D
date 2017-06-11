@@ -12,7 +12,7 @@ import com.cjburkey.mc2d.object.GameObject;
 import com.cjburkey.mc2d.render.Renderer;
 import com.cjburkey.mc2d.render.TextureAtlas;
 
-public class CoreModule extends ICoreModule {
+public final class CoreModule extends ICoreModule {
 	
 	public static CoreModule instance;
 	

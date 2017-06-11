@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.cjburkey.mc2d.block.Blocks;
 import com.cjburkey.mc2d.block.IBlock;
 
-public class ChunkData {
+public final class ChunkData {
 	
 	public static final int chunkSize = 16;
 	

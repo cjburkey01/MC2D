@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import com.cjburkey.mc2d.MC2D;
 
-public class GLFWWindow {
+public final class GLFWWindow {
 	
 	private long window;
 	private String title;

@@ -2,7 +2,7 @@ package com.cjburkey.mc2d.core;
 
 import java.io.InputStream;
 
-public class Resource {
+public final class Resource {
 	
 	public static InputStream getStream(String loc) {
 		String path = getPath(loc);

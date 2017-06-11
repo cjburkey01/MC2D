@@ -3,7 +3,7 @@ package com.cjburkey.mc2d.block;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Blocks {
+public final class Blocks {
 	
 	private static final List<IBlock> blocks = new ArrayList<IBlock>();
 	

@@ -2,7 +2,7 @@ package com.cjburkey.mc2d.io;
 
 import java.io.File;
 
-public class IO {
+public final class IO {
 	
 	public static File getGameDir() {
 		File dir = new File(System.getProperty("user.home"), "/MC2D/");
