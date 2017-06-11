@@ -9,6 +9,7 @@ public final class Transformation {
 	private static final float FOV = (float) Math.toRadians(90.0d);
 	private static final float NEAR_CLIP = 0.01f;
 	private static final float FAR_CLIP = 1000.0f;
+	private static final float scale = 1.0f / 150.0f;
 	
 	private final Matrix4f projectionMatrix;
 	private final Matrix4f viewMatrix;
@@ -22,7 +23,10 @@ public final class Transformation {
 
 	public final Matrix4f getProjectionMatrix(float width, float height) {
 		float aspectRatio = width / height;
-		projectionMatrix.identity().perspective(FOV, aspectRatio, NEAR_CLIP, FAR_CLIP);
+		
+		projectionMatrix.identity();
+		projectionMatrix.ortho(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, 0.01f, 1000.0f);
+		projectionMatrix.scale(width * scale, width * scale, 1.0f);
 		return projectionMatrix;
 	}
 	

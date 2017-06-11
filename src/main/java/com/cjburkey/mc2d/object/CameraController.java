@@ -5,10 +5,11 @@ import com.cjburkey.mc2d.render.Camera;
 public final class CameraController {
 	
 	private final Camera camera;
-	private final float speed = 0.1f;
+	private final float speed;
 	
-	public CameraController(Camera camera) {
+	public CameraController(float speed, Camera camera) {
 		this.camera = camera;
+		this.speed = speed;
 	}
 	
 	public void left() {

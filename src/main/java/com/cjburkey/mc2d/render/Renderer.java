@@ -47,12 +47,14 @@ public final class Renderer {
 		blockShader.setUniform("projectionMatrix", projectionMatrix);
 		blockShader.setUniform("texture_sampler", 0);
 		for(GameObject obj : objs) {
-			if(!obj.getMesh().isMeshBuilt()) {
-				obj.getMesh().buildMesh();
+			if(obj != null && obj.getMesh() != null) {
+				if(!obj.getMesh().isMeshBuilt()) {
+					obj.getMesh().buildMesh();
+				}
+				Matrix4f modelViewMatrix = transform.getModelViewMatrix(obj, viewMatrix);
+				blockShader.setUniform("modelViewMatrix", modelViewMatrix);
+				obj.render();
 			}
-			Matrix4f modelViewMatrix = transform.getModelViewMatrix(obj, viewMatrix);
-			blockShader.setUniform("modelViewMatrix", modelViewMatrix);
-			obj.getMesh().render();
 		}
 		
 		for(Runnable r : doLater) {

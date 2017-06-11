@@ -1,31 +1,22 @@
 package com.cjburkey.mc2d.chunk;
 
-import java.util.concurrent.ThreadLocalRandom;
-import com.cjburkey.mc2d.block.Blocks;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
 import com.cjburkey.mc2d.block.IBlock;
 
 public final class ChunkData {
 	
+	public static final float scale = 5.0f;
 	public static final int chunkSize = 16;
+	public static final float scaleAndSize = scale * chunkSize;
+	public static final float chunkZ = -5.0f;
 	
 	private IBlock blocks[][];
+	private final Vector2i chunkPos;
 	
-	public ChunkData() {
+	public ChunkData(int cx, int cy) {
 		blocks = new IBlock[chunkSize][chunkSize];
-		for(int x = 0; x < chunkSize; x ++) {
-			for(int y = 0; y < chunkSize; y ++) {
-				int rand = ThreadLocalRandom.current().nextInt(0, 3);
-				if(rand == 0) {
-					setBlock(x, y, Blocks.blockStone);
-				} else if(rand == 1 || rand == 2) {
-					if(y == chunkSize - 1) {
-						setBlock(x, y, Blocks.blockGrass);
-					} else {
-						setBlock(x, y, Blocks.blockDirt);
-					}
-				}
-			}
-		}
+		chunkPos = new Vector2i(cx, cy);
 	}
 	
 	public void setBlock(int x, int y, IBlock block) {
@@ -47,6 +38,18 @@ public final class ChunkData {
 			return blocks[x][y];
 		}
 		return null;
+	}
+	
+	public Vector2i getChunkCoords() {
+		return new Vector2i(chunkPos);
+	}
+	
+	public Vector3f getWorldCoords() {
+		return new Vector3f(chunkPos.x * scaleAndSize, chunkPos.y * scaleAndSize, chunkZ);
+	}
+	
+	public Vector2i getWorldCoordsForBlock(int x, int y) {
+		return new Vector2i(chunkPos.x * chunkSize + x, chunkPos.y * chunkSize + y);
 	}
 	
 }

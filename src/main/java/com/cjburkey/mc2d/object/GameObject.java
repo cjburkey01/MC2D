@@ -2,7 +2,7 @@ package com.cjburkey.mc2d.object;
 
 import org.joml.Vector3f;
 
-public final class GameObject {
+public class GameObject {
 	
 	private final Mesh mesh;
 	private final Vector3f position;
@@ -25,6 +25,12 @@ public final class GameObject {
 		this.position.y = y;
 		this.position.z = z;
 	}
+	
+	public void setPosition(Vector3f pos) {
+		position.x = pos.x;
+		position.y = pos.y;
+		position.z = pos.z;
+	}
 
 	public float getScale() {
 		return scale;
@@ -46,6 +52,10 @@ public final class GameObject {
 	
 	public Mesh getMesh() {
 		return mesh;
+	}
+	
+	public void render() {
+		mesh.render();
 	}
 	
 }

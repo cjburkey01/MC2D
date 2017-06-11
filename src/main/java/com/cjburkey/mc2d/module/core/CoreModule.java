@@ -4,8 +4,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
-import com.cjburkey.mc2d.chunk.ChunkData;
-import com.cjburkey.mc2d.chunk.MeshChunk;
+import com.cjburkey.mc2d.chunk.World;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.input.Input;
 import com.cjburkey.mc2d.input.KeyBinds;
@@ -23,6 +22,7 @@ public final class CoreModule extends ICoreModule {
 	private final Queue<GameObject> gameObjs;
 	private final TextureAtlas atlas;
 	private final CameraController camControl;
+	private final World world;
 	
 	public CoreModule() {
 		instance = this;
@@ -30,7 +30,8 @@ public final class CoreModule extends ICoreModule {
 		renderer = new Renderer();
 		gameObjs = new ConcurrentLinkedQueue<>();
 		atlas = new TextureAtlas();
-		camControl = new CameraController(renderer.getCamera());
+		camControl = new CameraController(1.0f, renderer.getCamera());
+		world = new World();
 	}
 	
 	public String getName() {
@@ -81,6 +82,10 @@ public final class CoreModule extends ICoreModule {
 			camControl.down();
 		}
 		
+		world.generateChunksAround(renderer.getCamera().getPosition(), 2);
+		world.renderChunksAround(renderer.getCamera().getPosition(), 2);
+		world.deRenderChunksAround(renderer.getCamera().getPosition(), 2);
+		
 		input.tick();
 	}
 	
@@ -89,10 +94,6 @@ public final class CoreModule extends ICoreModule {
 	}
 	
 	public void onRenderInit() {
-		GameObject chunk = new GameObject(MeshChunk.generateChunkMesh(new ChunkData(), atlas));
-		chunk.setPosition(0.0f, 0.0f, -2.0f);
-		gameObjs.add(chunk);
-		
 		input.renderInit();
 		renderer.init();
 		GLFW.glfwFocusWindow(MC2D.INSTANCE.getWindow().getWindow());
@@ -109,6 +110,14 @@ public final class CoreModule extends ICoreModule {
 			}
 		}
 		renderer.cleanup();
+	}
+	
+	public void addGameObject(GameObject obj) {
+		gameObjs.add(obj);
+	}
+	
+	public void removeGameObject(GameObject obj) {
+		gameObjs.remove(obj);
 	}
 	
 	public TextureAtlas getTextures() {
