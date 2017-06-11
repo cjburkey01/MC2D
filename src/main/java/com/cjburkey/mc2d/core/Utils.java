@@ -3,8 +3,11 @@ package com.cjburkey.mc2d.core;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import com.cjburkey.mc2d.MC2D;
 
 public class Utils {
@@ -39,6 +42,39 @@ public class Utils {
 			}
 		} else {
 			System.err.println("Couldn't load resource: " + loc);
+		}
+		return out;
+	}
+	
+	public static float[] vector3fToFloats(List<Vector3f> v3s) {
+		float[] out = new float[v3s.size() * 3];
+		int i = 0;
+		for(Vector3f v3 : v3s) {
+			out[i * 3] = v3.x;
+			out[i * 3 + 1] = v3.y;
+			out[i * 3 + 2] = v3.z;
+			i ++;
+		}
+		return out;
+	}
+	
+	public static float[] vector2fToFloats(List<Vector2f> v2s) {
+		float[] out = new float[v2s.size() * 2];
+		int i = 0;
+		for(Vector2f v2 : v2s) {
+			out[i * 2] = v2.x;
+			out[i * 2 + 1] = v2.y;
+			i ++;
+		}
+		return out;
+	}
+	
+	public static int[] intToInts(List<Integer> ints) {
+		int[] out = new int[ints.size()];
+		int i = 0;
+		for(Integer in : ints) {
+			out[i] = in;
+			i ++;
 		}
 		return out;
 	}

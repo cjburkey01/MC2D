@@ -7,35 +7,40 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
+import com.cjburkey.mc2d.render.Texture;
 
 public class Mesh {
 	
 	private final int vertCount;
 	private final float[] verts;
-	private final float[] colors;
+	private final float[] uvs;
 	private final int[] tris;
 	
+	private boolean built = false;
 	private int vao;
 	private int vbo;
 	private int triVbo;
-	private int colVbo;
+	private int uvVbo;
+	private Texture texture;
 	
-	public Mesh(float[] verts, float[] colors, int[] tris) {
+	public Mesh(float[] verts, float[] uvs, int[] tris, Texture texture) {
 		vertCount = tris.length;
 		this.verts = verts;
-		this.colors = colors;
+		this.uvs = uvs;
 		this.tris = tris;
+		this.texture = texture;
 	}
 	
 	public void buildMesh() {
+		built = true;
 		FloatBuffer vertBuff = null;
-		FloatBuffer colorBuff = null;
+		FloatBuffer uvBuff = null;
 		IntBuffer triBuff = null;
 		try {
 			vertBuff = MemoryUtil.memAllocFloat(verts.length);
 			vertBuff.put(verts).flip();
-			colorBuff = MemoryUtil.memAllocFloat(colors.length);
-			colorBuff.put(colors).flip();
+			uvBuff = MemoryUtil.memAllocFloat(uvs.length);
+			uvBuff.put(uvs).flip();
 			triBuff = MemoryUtil.memAllocInt(tris.length);
 			triBuff.put(tris).flip();
 			
@@ -48,10 +53,10 @@ public class Mesh {
 			GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 			
-			colVbo = GL15.glGenBuffers();
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, colVbo);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuff, GL15.GL_STATIC_DRAW);
-			GL20.glVertexAttribPointer(1, 3, GL11.GL_FLOAT, false, 0, 0);
+			uvVbo = GL15.glGenBuffers();
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, uvVbo);
+			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, uvBuff, GL15.GL_STATIC_DRAW);
+			GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0);
 			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 			
 			triVbo = GL15.glGenBuffers();
@@ -59,6 +64,8 @@ public class Mesh {
 			GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, triBuff, GL15.GL_STATIC_DRAW);
 			
 			GL30.glBindVertexArray(0);
+			
+			texture.load();
 		} finally {
 			if(vertBuff != null) {
 				MemoryUtil.memFree(vertBuff);
@@ -68,13 +75,16 @@ public class Mesh {
 				MemoryUtil.memFree(triBuff);
 			}
 			
-			if(colorBuff != null) {
-				MemoryUtil.memFree(colorBuff);
+			if(uvBuff != null) {
+				MemoryUtil.memFree(uvBuff);
 			}
 		}
 	}
 	
 	public void render() {
+		if(texture != null) {
+			texture.activate();
+		}
 		GL30.glBindVertexArray(vao);
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
@@ -88,10 +98,17 @@ public class Mesh {
 		GL20.glDisableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glDeleteBuffers(vbo);
-		GL15.glDeleteBuffers(colVbo);
+		GL15.glDeleteBuffers(uvVbo);
 		GL15.glDeleteBuffers(triVbo);
 		GL30.glBindVertexArray(0);
 		GL30.glDeleteVertexArrays(vao);
+		if(texture != null) {
+			texture.cleanup();
+		}
+	}
+	
+	public boolean isMeshBuilt() {
+		return built;
 	}
 	
 }

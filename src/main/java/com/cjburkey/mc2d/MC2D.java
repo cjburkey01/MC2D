@@ -2,9 +2,11 @@ package com.cjburkey.mc2d;
 
 import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
+import com.cjburkey.mc2d.block.Blocks;
 import com.cjburkey.mc2d.core.Logger;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.loop.Loops;
+import com.cjburkey.mc2d.module.core.CoreModule;
 import com.cjburkey.mc2d.module.core.ICoreModule;
 import com.cjburkey.mc2d.module.core.ModuleHandler;
 import com.cjburkey.mc2d.window.GLFWWindow;
@@ -36,6 +38,10 @@ public class MC2D {
 		logger.log(" -  OpenGL:\t" + GL11.glGetString(GL11.GL_VERSION));
 		logger.log(" -  MC2D:\t\t" + VERSION);
 		modules.loadModules(ICoreModule.class);
+		
+		Blocks.loadBlocks();
+		CoreModule.instance.getTextures().build(Blocks.getBlocks());
+		
 		initLoops();
 		startLoops();
 		window.cleanup();

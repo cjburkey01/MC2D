@@ -1,5 +1,7 @@
 package com.cjburkey.mc2d.render;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import com.cjburkey.mc2d.MC2D;
@@ -9,11 +11,16 @@ import com.cjburkey.mc2d.object.Transformation;
 import com.cjburkey.mc2d.window.GLFWWindow;
 
 public class Renderer {
-
+	
+	public static Renderer instance;
+	
+	private final Queue<Runnable> doLater;
 	private ShaderProgram blockShader;
 	private final Transformation transform;
 	
 	public Renderer() {
+		instance = this;
+		doLater = new ConcurrentLinkedQueue<>();
 		transform = new Transformation();
 	}
 	
@@ -25,33 +32,40 @@ public class Renderer {
 		
 		blockShader.createUniform("projectionMatrix");
 		blockShader.createUniform("worldMatrix");
+		blockShader.createUniform("texture_sampler");
 	}
 	
-	private int x = 0;
 	public void render(GameObject[] objs) {
-		x ++;
-		if(x >= 360) {
-			x = 0;
-		}
 		clear();
 		GLFWWindow window = MC2D.INSTANCE.getWindow();
 		blockShader.bind();
 		
 		Matrix4f projectionMatrix = transform.getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
 		blockShader.setUniform("projectionMatrix", projectionMatrix);
+		blockShader.setUniform("texture_sampler", 0);
 		for(GameObject obj : objs) {
-			obj.setRotation(x, x, x);
-			System.out.println(x);
+			if(!obj.getMesh().isMeshBuilt()) {
+				obj.getMesh().buildMesh();
+			}
 			Matrix4f worldMatrix = transform.getWorldMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
 			blockShader.setUniform("worldMatrix", worldMatrix);
 			obj.getMesh().render();
 		}
+		
+		for(Runnable r : doLater) {
+			r.run();
+		}
+		doLater.clear();
 		
 		ShaderProgram.unbind();
 	}
 	
 	public void cleanup() {
 		blockShader.cleanup();
+	}
+	
+	public void runLater(Runnable call) {
+		doLater.add(call);
 	}
 	
 	private void clear() {

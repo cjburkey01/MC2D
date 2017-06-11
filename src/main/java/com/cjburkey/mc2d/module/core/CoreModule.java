@@ -4,22 +4,29 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
+import com.cjburkey.mc2d.chunk.ChunkData;
+import com.cjburkey.mc2d.chunk.MeshChunk;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.input.Input;
 import com.cjburkey.mc2d.object.GameObject;
-import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.render.Renderer;
+import com.cjburkey.mc2d.render.TextureAtlas;
 
 public class CoreModule extends ICoreModule {
+	
+	public static CoreModule instance;
 	
 	private final Input input;
 	private final Renderer renderer;
 	private final Queue<GameObject> gameObjs;
+	private final TextureAtlas atlas;
 	
 	public CoreModule() {
+		instance = this;
 		input = new Input();
 		renderer = new Renderer();
 		gameObjs = new ConcurrentLinkedQueue<>();
+		atlas = new TextureAtlas();
 	}
 	
 	public String getName() {
@@ -59,36 +66,9 @@ public class CoreModule extends ICoreModule {
 	}
 	
 	public void onRenderInit() {
-		GameObject tri;
-		gameObjs.add(tri = new GameObject(new Mesh(new float[] {
-				-0.5f, 0.5f, 0.5f,		// 0
-				-0.5f, -0.5f, 0.5f,		// 1
-				0.5f, -0.5f, 0.5f,		// 2
-				0.5f, 0.5f, 0.5f,		// 3
-				-0.5f, 0.5f, -0.5f,		// 4
-				0.5f, 0.5f, -0.5f,		// 5
-				-0.5f, -0.5f, -0.5f,	// 6
-				0.5f, -0.5f, -0.5f,		// 7
-		}, new float[] {
-				0.5f, 0.0f, 0.0f,
-				0.0f, 0.5f, 0.0f,
-				0.0f, 0.0f, 0.5f,
-				0.0f, 0.5f, 0.5f,
-				0.5f, 0.0f, 0.0f,
-				0.0f, 0.5f, 0.0f,
-				0.0f, 0.0f, 0.5f,
-				0.0f, 0.5f, 0.5f
-		}, new int[] {
-				0, 1, 3, 3, 1, 2,
-				4, 0, 3, 5, 4, 3,
-				3, 2, 7, 5, 3, 7,
-				6, 1, 0, 6, 0, 4,
-				2, 1, 6, 2, 6, 7,
-				7, 6, 4, 7, 4, 5
-		})));
-		
-		tri.getMesh().buildMesh();
-		tri.setPosition(0.0f, 0.0f, -2.0f);
+		GameObject chunk = new GameObject(MeshChunk.generateChunkMesh(new ChunkData(), atlas));
+		chunk.setPosition(0.0f, 0.0f, -2.0f);
+		gameObjs.add(chunk);
 		
 		input.renderInit();
 		renderer.init();
@@ -106,6 +86,10 @@ public class CoreModule extends ICoreModule {
 			}
 		}
 		renderer.cleanup();
+	}
+	
+	public TextureAtlas getTextures() {
+		return atlas;
 	}
 	
 }

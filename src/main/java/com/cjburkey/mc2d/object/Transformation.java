@@ -18,7 +18,7 @@ public class Transformation {
 	}
 
 	public final Matrix4f getProjectionMatrix(float width, float height) {
-		float aspectRatio = width / height;		
+		float aspectRatio = width / height;
 		projectionMatrix.identity().perspective(FOV, aspectRatio, NEAR_CLIP, FAR_CLIP);
 		return projectionMatrix;
 	}

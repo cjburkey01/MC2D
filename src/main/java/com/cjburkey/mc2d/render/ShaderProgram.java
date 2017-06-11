@@ -49,6 +49,10 @@ public class ShaderProgram {
 			GL20.glUniformMatrix4fv(uniforms.get(name), false, buff);
 		}
 	}
+	
+	public void setUniform(String name, int value) {
+		GL20.glUniform1i(uniforms.get(name), value);
+	}
 
 	protected int createShader(String shaderCode, int shaderType) {
 		int shaderId = GL20.glCreateShader(shaderType);
