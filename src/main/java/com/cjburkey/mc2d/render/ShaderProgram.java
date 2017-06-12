@@ -4,6 +4,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 import com.cjburkey.mc2d.MC2D;
@@ -50,8 +51,20 @@ public final class ShaderProgram {
 		}
 	}
 	
+	public void setUniform(String name, Vector3f value) {
+		try(MemoryStack stack = MemoryStack.stackPush()) {
+			FloatBuffer buff = stack.mallocFloat(3);
+			value.get(buff);
+			GL20.glUniformMatrix4fv(uniforms.get(name), false, buff);
+		}
+	}
+	
 	public void setUniform(String name, int value) {
 		GL20.glUniform1i(uniforms.get(name), value);
+	}
+	
+	public void setUniform(String name, float value) {
+		GL20.glUniform1f(uniforms.get(name), value);
 	}
 
 	protected int createShader(String shaderCode, int shaderType) {

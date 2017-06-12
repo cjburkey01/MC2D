@@ -6,7 +6,9 @@ import com.cjburkey.mc2d.render.Camera;
 
 public final class Transformation {
 	
-	private static final float scale = 1.0f / 150.0f;
+	private static final float NEAR = 0.01f;
+	private static final float FAR = 1000.0f;
+	public static float scale = 50.0f;
 	
 	private final Matrix4f projectionMatrix;
 	private final Matrix4f viewMatrix;
@@ -20,8 +22,8 @@ public final class Transformation {
 
 	public final Matrix4f getProjectionMatrix(float width, float height) {
 		projectionMatrix.identity();
-		projectionMatrix.ortho(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, 0.01f, 1000.0f);
-		projectionMatrix.scale(width * scale, width * scale, 1.0f);
+		projectionMatrix.ortho(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, NEAR, FAR);
+		projectionMatrix.scale(width * (1.0f / scale), width * (1.0f / scale), 1.0f);
 		return projectionMatrix;
 	}
 	

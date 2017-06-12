@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.system.MemoryUtil;
 import com.cjburkey.mc2d.MC2D;
 
@@ -14,7 +15,8 @@ public final class GLFWWindow {
 	
 	private long window;
 	private String title;
-	private final Vector2i size = new Vector2i();;
+	private final Vector2i size = new Vector2i();
+	private GLCapabilities caps;
 	
 	public void create() {
 		GLFWErrorCallback.createPrint(System.err).set();
@@ -38,7 +40,7 @@ public final class GLFWWindow {
 		GLFW.glfwSetWindowSizeCallback(window, (w, width, height) -> setWindowSize(width, height));
 		
 		GLFW.glfwMakeContextCurrent(window);
-		GL.createCapabilities();
+		caps = GL.createCapabilities();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GLFW.glfwSwapInterval(1);
 		GLFW.glfwSwapBuffers(window);
@@ -99,6 +101,10 @@ public final class GLFWWindow {
 	
 	public long getWindow() {
 		return window;
+	}
+	
+	public GLCapabilities getCaps() {
+		return caps;
 	}
 	
 }

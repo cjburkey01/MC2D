@@ -9,7 +9,7 @@ public final class ChunkData {
 	public static final float scale = 5.0f;
 	public static final int chunkSize = 16;
 	public static final float scaleAndSize = scale * chunkSize;
-	public static final float chunkZ = -5.0f;
+	public static final float chunkZ = -0.05f;
 	
 	private IBlock blocks[][];
 	private final Vector2i chunkPos;

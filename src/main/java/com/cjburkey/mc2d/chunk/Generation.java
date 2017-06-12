@@ -20,8 +20,6 @@ public final class Generation {
 		}
 	}
 	
-	
-	
 	private static IBlock getBlockForWorldPos(int x, int y) {
 		IBlock block = getNoiseBlockForWorldPos(x, y);
 		if(block == null) {

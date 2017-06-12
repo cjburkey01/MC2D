@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import com.cjburkey.mc2d.module.core.CoreModule;
-import com.cjburkey.mc2d.object.GameObjectChunk;
 
 public class World {
 	
@@ -93,7 +92,7 @@ public class World {
 	
 	private void deRenderChunk(GameObjectChunk chunk) {
 		rendered.remove(chunk);
-		CoreModule.instance.removeGameObject(chunk);
+		chunk.destroy();
 	}
 	
 	public static Vector2i worldCoordsToChunk(Vector3f world) {

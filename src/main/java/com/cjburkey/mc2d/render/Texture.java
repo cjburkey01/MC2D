@@ -14,6 +14,9 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 public final class Texture {
 	
+	public static Texture DEFAULT = new Texture("mc2d:texture/basic/missing.png");
+	public static Texture BLANK = new Texture("mc2d:texture/basic/blank.png");
+	
 	private PNGDecoder png;
 	private boolean isLoaded = false;
 	private int textureId;

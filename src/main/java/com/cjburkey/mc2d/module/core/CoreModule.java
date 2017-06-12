@@ -10,12 +10,15 @@ import com.cjburkey.mc2d.input.Input;
 import com.cjburkey.mc2d.input.KeyBinds;
 import com.cjburkey.mc2d.object.CameraController;
 import com.cjburkey.mc2d.object.GameObject;
+import com.cjburkey.mc2d.object.Mesh;
+import com.cjburkey.mc2d.object.Transformation;
 import com.cjburkey.mc2d.render.Renderer;
 import com.cjburkey.mc2d.render.TextureAtlas;
 
 public final class CoreModule extends ICoreModule {
 	
 	public static CoreModule instance;
+	public static final int chunkRange = 5;
 	
 	private final Input input;
 	private final Renderer renderer;
@@ -59,6 +62,8 @@ public final class CoreModule extends ICoreModule {
 		KeyBinds.addKeyBind("right", GLFW.GLFW_KEY_D);
 		KeyBinds.addKeyBind("up", GLFW.GLFW_KEY_W);
 		KeyBinds.addKeyBind("down", GLFW.GLFW_KEY_S);
+		KeyBinds.addKeyBind("in", GLFW.GLFW_KEY_UP);
+		KeyBinds.addKeyBind("out", GLFW.GLFW_KEY_DOWN);
 	}
 	
 	public void onLogicTick() {
@@ -82,9 +87,17 @@ public final class CoreModule extends ICoreModule {
 			camControl.down();
 		}
 		
-		world.generateChunksAround(renderer.getCamera().getPosition(), 2);
-		world.renderChunksAround(renderer.getCamera().getPosition(), 2);
-		world.deRenderChunksAround(renderer.getCamera().getPosition(), 2);
+		if(KeyBinds.keyHeld(input, "in")) {
+			Transformation.scale -= 1.5f;
+		}
+		
+		if(KeyBinds.keyHeld(input, "out")) {
+			Transformation.scale += 1.5f;
+		}
+		
+		world.generateChunksAround(renderer.getCamera().getPosition(), chunkRange);
+		world.renderChunksAround(renderer.getCamera().getPosition(), chunkRange);
+		world.deRenderChunksAround(renderer.getCamera().getPosition(), chunkRange);
 		
 		input.tick();
 	}
@@ -106,7 +119,7 @@ public final class CoreModule extends ICoreModule {
 	public void onRenderCleanup() {
 		for(GameObject obj : gameObjs) {
 			if(obj != null) {
-				obj.getMesh().cleanup();
+				obj.cleanup();
 			}
 		}
 		renderer.cleanup();
@@ -118,6 +131,9 @@ public final class CoreModule extends ICoreModule {
 	
 	public void removeGameObject(GameObject obj) {
 		gameObjs.remove(obj);
+		for(Mesh m : obj.getMesh()) {
+			renderer.runLater(() -> m.cleanup());
+		}
 	}
 	
 	public TextureAtlas getTextures() {

@@ -11,6 +11,7 @@ import com.cjburkey.mc2d.render.Texture;
 
 public final class Mesh {
 	
+	private final boolean outline = false;
 	private final int vertCount;
 	private final float[] verts;
 	private final float[] uvs;
@@ -21,6 +22,7 @@ public final class Mesh {
 	private int vbo;
 	private int triVbo;
 	private int uvVbo;
+	private float opacity;
 	private Texture texture;
 	
 	public Mesh(float[] verts, float[] uvs, int[] tris, Texture texture) {
@@ -29,6 +31,7 @@ public final class Mesh {
 		this.uvs = uvs;
 		this.tris = tris;
 		this.texture = texture;
+		opacity = 1.0f;
 	}
 	
 	public void buildMesh() {
@@ -107,8 +110,20 @@ public final class Mesh {
 		}
 	}
 	
+	public void setOpacity(float op) {
+		opacity = op;
+	}
+	
+	public float getOpacity() {
+		return opacity;
+	}
+	
 	public boolean isMeshBuilt() {
 		return built;
+	}
+	
+	public boolean isOutline() {
+		return outline;
 	}
 	
 }

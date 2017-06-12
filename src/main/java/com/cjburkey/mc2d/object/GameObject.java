@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 public class GameObject {
 	
-	private final Mesh mesh;
+	protected final Mesh mesh;
 	private final Vector3f position;
 	private float scale;
 	private final Vector3f rotation;
@@ -14,10 +14,6 @@ public class GameObject {
 		position = new Vector3f(0, 0, 0);
 		scale = 1;
 		rotation = new Vector3f(0, 0, 0);
-	}
-
-	public Vector3f getPosition() {
-		return position;
 	}
 
 	public void setPosition(float x, float y, float z) {
@@ -31,31 +27,47 @@ public class GameObject {
 		position.y = pos.y;
 		position.z = pos.z;
 	}
-
-	public float getScale() {
-		return scale;
+	
+	public void render() {
+		mesh.render();
+	}
+	
+	public void cleanup() {
+		mesh.cleanup();
 	}
 
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
-
-	public Vector3f getRotation() {
-		return rotation;
-	}
-
+	
 	public void setRotation(float x, float y, float z) {
 		this.rotation.x = x;
 		this.rotation.y = y;
 		this.rotation.z = z;
 	}
 	
-	public Mesh getMesh() {
-		return mesh;
+	public void generateMesh() {
+		mesh.buildMesh();
+	}
+
+	public Vector3f getPosition() {
+		return position;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public Vector3f getRotation() {
+		return rotation;
 	}
 	
-	public void render() {
-		mesh.render();
+	public Mesh[] getMesh() {
+		return new Mesh[] { mesh };
+	}
+	
+	public boolean isMeshBuilt() {
+		return mesh.isMeshBuilt();
 	}
 	
 }

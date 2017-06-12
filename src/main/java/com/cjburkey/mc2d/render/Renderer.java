@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.core.Utils;
 import com.cjburkey.mc2d.object.GameObject;
+import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.object.Transformation;
 import com.cjburkey.mc2d.window.GLFWWindow;
 
@@ -15,9 +16,10 @@ public final class Renderer {
 	public static Renderer instance;
 	
 	private final Queue<Runnable> doLater;
-	private ShaderProgram blockShader;
 	private final Transformation transform;
 	private final Camera camera;
+
+	private ShaderProgram blockShader;
 	
 	public Renderer() {
 		instance = this;
@@ -31,29 +33,33 @@ public final class Renderer {
 		blockShader.createVertexShader(Utils.readResourceAsString("mc2d:shader/block/block.vs"));
 		blockShader.createFragmentShader(Utils.readResourceAsString("mc2d:shader/block/block.fs"));
 		blockShader.link();
-		
 		blockShader.createUniform("projectionMatrix");
 		blockShader.createUniform("modelViewMatrix");
 		blockShader.createUniform("texture_sampler");
+		blockShader.createUniform("opacity");
 	}
 	
 	public void render(GameObject[] objs) {
 		clear();
 		GLFWWindow window = MC2D.INSTANCE.getWindow();
+
 		blockShader.bind();
-		
 		Matrix4f viewMatrix = transform.getViewMatrix(camera);
 		Matrix4f projectionMatrix = transform.getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
 		blockShader.setUniform("projectionMatrix", projectionMatrix);
 		blockShader.setUniform("texture_sampler", 0);
 		for(GameObject obj : objs) {
-			if(obj != null && obj.getMesh() != null) {
-				if(!obj.getMesh().isMeshBuilt()) {
-					obj.getMesh().buildMesh();
+			Mesh[] meshes = obj.getMesh();
+			for(Mesh mesh : meshes) {
+				if(!mesh.isOutline()) {
+					if(!obj.isMeshBuilt()) {
+						obj.generateMesh();
+					}
+					Matrix4f modelViewMatrix = transform.getModelViewMatrix(obj, viewMatrix);
+					blockShader.setUniform("modelViewMatrix", modelViewMatrix);
+					blockShader.setUniform("opacity", mesh.getOpacity());
+					obj.render();
 				}
-				Matrix4f modelViewMatrix = transform.getModelViewMatrix(obj, viewMatrix);
-				blockShader.setUniform("modelViewMatrix", modelViewMatrix);
-				obj.render();
 			}
 		}
 		
@@ -67,6 +73,7 @@ public final class Renderer {
 	
 	public void cleanup() {
 		blockShader.cleanup();
+		//solidShader.cleanup();
 	}
 	
 	public void runLater(Runnable call) {

@@ -10,7 +10,7 @@ import com.cjburkey.mc2d.core.Utils;
 import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.render.TextureAtlas;
 
-public final class MeshChunk {
+public final class ChunkMeshGenerator {
 	
 	public static final float blockSize = 1.0f;
 	
@@ -43,8 +43,8 @@ public final class MeshChunk {
 		Vector3f i3 = new Vector3f();
 		
 		i0.add(corner);
-		i1.add(corner).add(new Vector3f(0.0f, -1.0f, 0.0f));
-		i2.add(corner).add(new Vector3f(1.0f, -1.0f, 0.0f));
+		i1.add(corner).add(new Vector3f(0.0f, 1.0f, 0.0f));
+		i2.add(corner).add(new Vector3f(1.0f, 1.0f, 0.0f));
 		i3.add(corner).add(new Vector3f(1.0f, 0.0f, 0.0f));
 		
 		verts.add(i0);
@@ -71,10 +71,10 @@ public final class MeshChunk {
 		final Vector2i forBlock = atlas.getBlock(block);
 		final float atlasStep = 1.0f / (float) atlas.getSize();
 		
-		uvs.add(new Vector2f(atlasStep * forBlock.x, atlasStep * forBlock.y));
 		uvs.add(new Vector2f(atlasStep * forBlock.x, atlasStep + atlasStep * forBlock.y));
-		uvs.add(new Vector2f(atlasStep + atlasStep * forBlock.x, atlasStep + atlasStep * forBlock.y));
+		uvs.add(new Vector2f(atlasStep * forBlock.x, atlasStep * forBlock.y));
 		uvs.add(new Vector2f(atlasStep + atlasStep * forBlock.x, atlasStep * forBlock.y));
+		uvs.add(new Vector2f(atlasStep + atlasStep * forBlock.x, atlasStep + atlasStep * forBlock.y));
 	}
 	
 }
