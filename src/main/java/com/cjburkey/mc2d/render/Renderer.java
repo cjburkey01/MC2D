@@ -42,7 +42,7 @@ public final class Renderer {
 	public void render(GameObject[] objs) {
 		clear();
 		GLFWWindow window = MC2D.INSTANCE.getWindow();
-
+		
 		blockShader.bind();
 		Matrix4f viewMatrix = transform.getViewMatrix(camera);
 		Matrix4f projectionMatrix = transform.getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
@@ -51,7 +51,7 @@ public final class Renderer {
 		for(GameObject obj : objs) {
 			Mesh[] meshes = obj.getMesh();
 			for(Mesh mesh : meshes) {
-				if(!mesh.isOutline()) {
+				if(mesh != null) {
 					if(!obj.isMeshBuilt()) {
 						obj.generateMesh();
 					}

@@ -1,12 +1,14 @@
-package com.cjburkey.mc2d.chunk;
+package com.cjburkey.mc2d.world;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import com.cjburkey.mc2d.chunk.ChunkData;
+import com.cjburkey.mc2d.chunk.GameObjectChunk;
 import com.cjburkey.mc2d.module.core.CoreModule;
 
-public class World {
+public final class World {
 	
 	private final Queue<ChunkData> generated = new ConcurrentLinkedQueue<>();
 	private final Queue<GameObjectChunk> rendered = new ConcurrentLinkedQueue<>();
@@ -39,6 +41,13 @@ public class World {
 			generated.add(chunk);
 		}
 	}
+	
+	/*private void deGenerateChunk(int x, int y) {
+		ChunkData chunk = getGeneratedChunkAt(x, y);
+		if(chunk != null) {
+			generated.remove(chunk);
+		}
+	}*/
 	
 	// -- RENDER -- //
 	
@@ -75,6 +84,15 @@ public class World {
 			}
 		}
 		return null;
+	}
+	
+	public void reRenderChunk(int x, int y) {
+		GameObjectChunk chunk = getRenderedChunkAt(x, y);
+		if(chunk != null) {
+			rendered.remove(chunk);
+			chunk.createMesh();
+			rendered.add(chunk);
+		}
 	}
 	
 	private void renderChunkAt(Vector2i vec) {

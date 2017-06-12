@@ -13,16 +13,16 @@ public final class ModuleHandler<T extends ICoreModule> {
 	private final EventHandler events = new EventHandler();
 	
 	public void loadModules(Class<T> c) {
-		System.out.println("Loading modules...");
+		MC2D.getLogger().log("Loading modules...");
 		Reflections r = new Reflections();
 		Set<Class<? extends T>> classes = r.getSubTypesOf(c);
 		for(Class<? extends T> clazz : classes) {
 			ICoreModule m = addModule(clazz);
 			if(m != null) {
-				System.out.println("Loaded module: " + m.getName());
+				MC2D.getLogger().log("Loaded module: " + m.getName());
 			}
 		}
-		System.out.println("Loaded modules.");
+		MC2D.getLogger().log("Loaded modules.");
 	}
 	
 	private ICoreModule addModule(Class<? extends T> clazz) {

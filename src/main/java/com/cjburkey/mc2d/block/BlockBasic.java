@@ -1,6 +1,6 @@
 package com.cjburkey.mc2d.block;
 
-public final class BlockBasic implements IBlock {
+public final class BlockBasic extends ABlock {
 	
 	private String name;
 	

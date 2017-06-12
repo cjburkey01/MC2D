@@ -3,6 +3,7 @@ package com.cjburkey.mc2d.object;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import com.cjburkey.mc2d.render.Camera;
+import com.cjburkey.mc2d.window.GLFWWindow;
 
 public final class Transformation {
 	
@@ -21,6 +22,7 @@ public final class Transformation {
 	}
 
 	public final Matrix4f getProjectionMatrix(float width, float height) {
+		if(scale < 1.0f) scale = 1.0f;
 		projectionMatrix.identity();
 		projectionMatrix.ortho(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, NEAR, FAR);
 		projectionMatrix.scale(width * (1.0f / scale), width * (1.0f / scale), 1.0f);
@@ -48,6 +50,18 @@ public final class Transformation {
 		Matrix4f view = new Matrix4f(viewMatrix);
 		return view.mul(modelViewMatrix);
 	}
-
+	
+	public Vector3f screenCoordsToWorldCoords(GLFWWindow window, Camera cam, double xP, double yP) {
+		float x = 2.0f * (float) xP / (float) window.getWindowSize().x - 1.0f;
+		float y = 2.0f * (float) yP / (float) window.getWindowSize().y - 1.0f;
+		
+		Matrix4f projection = getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
+		Matrix4f view = getViewMatrix(cam);
+		Matrix4f projectionView = new Matrix4f(projection).mul(new Matrix4f(view));
+		projectionView.invert();
+		
+		Vector3f point = new Vector3f(x, y, 0);
+		return point.mulPosition(projectionView);
+	}
 	
 }

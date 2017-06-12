@@ -1,40 +1,40 @@
 package com.cjburkey.mc2d.render;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
+import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.core.Resource;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 public final class Texture {
 	
-	public static Texture DEFAULT = new Texture("mc2d:texture/basic/missing.png");
-	public static Texture BLANK = new Texture("mc2d:texture/basic/blank.png");
-	
 	private PNGDecoder png;
 	private boolean isLoaded = false;
 	private int textureId;
 	
-	public Texture(InputStream stream) {
-		try {
-			png = new PNGDecoder(stream);
-		} catch(Exception e) {
-			e.printStackTrace();
+	private static Texture getDefaultTexture() {
+		return getTexture("mc2d:texture/basic/missing.png");
+	}
+	
+	public static Texture getTexture(String loc) {
+		return getTexture(Resource.getStream(loc));
+	}
+	
+	public static Texture getTexture(InputStream stream) {
+		Texture texture = new Texture();
+		if(stream != null) {
+			try {
+				texture.png = new PNGDecoder(stream);
+				return texture;
+			} catch(Exception e) {
+				MC2D.getLogger().log("Couldn't load texture.");
+			}
 		}
-	}
-	
-	public Texture(String loc) {
-		this(Resource.getStream(loc));
-	}
-	
-	public Texture(File file) throws MalformedURLException, IOException {
-		this(file.toURI().toURL().openStream());
+		return getDefaultTexture();
 	}
 	
 	public void load() {

@@ -4,7 +4,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
-import com.cjburkey.mc2d.chunk.World;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.input.Input;
 import com.cjburkey.mc2d.input.KeyBinds;
@@ -14,6 +13,7 @@ import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.object.Transformation;
 import com.cjburkey.mc2d.render.Renderer;
 import com.cjburkey.mc2d.render.TextureAtlas;
+import com.cjburkey.mc2d.world.World;
 
 public final class CoreModule extends ICoreModule {
 	
@@ -58,6 +58,7 @@ public final class CoreModule extends ICoreModule {
 	}
 	
 	public void onLogicInit() {
+		KeyBinds.addKeyBind("cancel", GLFW.GLFW_KEY_ESCAPE);
 		KeyBinds.addKeyBind("left", GLFW.GLFW_KEY_A);
 		KeyBinds.addKeyBind("right", GLFW.GLFW_KEY_D);
 		KeyBinds.addKeyBind("up", GLFW.GLFW_KEY_W);
@@ -67,7 +68,7 @@ public final class CoreModule extends ICoreModule {
 	}
 	
 	public void onLogicTick() {
-		if(input.keyPressed(GLFW.GLFW_KEY_ESCAPE)) {
+		if(KeyBinds.keyPressed(input, "cancel")) {
 			MC2D.INSTANCE.stopGame();
 		}
 		
@@ -88,16 +89,14 @@ public final class CoreModule extends ICoreModule {
 		}
 		
 		if(KeyBinds.keyHeld(input, "in")) {
-			Transformation.scale -= 1.5f;
+			Transformation.scale -= 2.5f;
 		}
 		
 		if(KeyBinds.keyHeld(input, "out")) {
-			Transformation.scale += 1.5f;
+			Transformation.scale += 2.5f;
 		}
 		
-		world.generateChunksAround(renderer.getCamera().getPosition(), chunkRange);
-		world.renderChunksAround(renderer.getCamera().getPosition(), chunkRange);
-		world.deRenderChunksAround(renderer.getCamera().getPosition(), chunkRange);
+		chunkGen();
 		
 		input.tick();
 	}
@@ -138,6 +137,16 @@ public final class CoreModule extends ICoreModule {
 	
 	public TextureAtlas getTextures() {
 		return atlas;
+	}
+	
+	public Input getInput() {
+		return input;
+	}
+	
+	private void chunkGen() {
+		world.generateChunksAround(renderer.getCamera().getPosition(), chunkRange);
+		world.renderChunksAround(renderer.getCamera().getPosition(), chunkRange);
+		world.deRenderChunksAround(renderer.getCamera().getPosition(), chunkRange);
 	}
 	
 }

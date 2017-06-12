@@ -5,7 +5,7 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import com.cjburkey.mc2d.block.IBlock;
+import com.cjburkey.mc2d.block.ABlock;
 import com.cjburkey.mc2d.core.Utils;
 import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.render.TextureAtlas;
@@ -32,7 +32,7 @@ public final class ChunkMeshGenerator {
 		return new Mesh(Utils.vector3fToFloats(verts), Utils.vector2fToFloats(uvs), Utils.intToInts(tris), atlas.getTexture());
 	}
 	
-	private static void addBlock(IBlock block, int x, int y, List<Vector3f> verts, List<Vector2f> uvs, List<Integer> tris, TextureAtlas atlas) {
+	private static void addBlock(ABlock block, int x, int y, List<Vector3f> verts, List<Vector2f> uvs, List<Integer> tris, TextureAtlas atlas) {
 		final boolean rev = true;
 		final int index = verts.size();
 		Vector3f corner = new Vector3f(x, y, 0.0f);

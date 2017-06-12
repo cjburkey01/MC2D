@@ -9,5 +9,4 @@ uniform float opacity;
 void main() {
 	fragColor = texture(texture_sampler, outTexCoord);
 	fragColor.a = opacity;
-	//float op = opacity;
 }

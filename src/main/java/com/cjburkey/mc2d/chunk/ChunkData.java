@@ -2,7 +2,8 @@ package com.cjburkey.mc2d.chunk;
 
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import com.cjburkey.mc2d.block.IBlock;
+import com.cjburkey.mc2d.block.ABlock;
+import com.cjburkey.mc2d.block.BlockState;
 
 public final class ChunkData {
 	
@@ -11,17 +12,17 @@ public final class ChunkData {
 	public static final float scaleAndSize = scale * chunkSize;
 	public static final float chunkZ = -0.05f;
 	
-	private IBlock blocks[][];
+	private BlockState[][] blocks;
 	private final Vector2i chunkPos;
 	
 	public ChunkData(int cx, int cy) {
-		blocks = new IBlock[chunkSize][chunkSize];
+		blocks = new BlockState[chunkSize][chunkSize];
 		chunkPos = new Vector2i(cx, cy);
 	}
 	
-	public void setBlock(int x, int y, IBlock block) {
+	public void setBlock(int x, int y, ABlock block) {
 		if(inChunk(x, y)) {
-			blocks[x][y] = block;
+			blocks[x][y] = new BlockState(block, getWorldCoordsForBlock(x, y));
 		}
 	}
 	
@@ -33,9 +34,17 @@ public final class ChunkData {
 		return ((x >= 0) && (x < chunkSize) && (y >= 0) && (y < chunkSize));
 	}
 	
-	public IBlock getBlock(int x, int y) {
+	public BlockState getBlockState(int x, int y) {
 		if(inChunk(x, y)) {
 			return blocks[x][y];
+		}
+		return null;
+	}
+	
+	public ABlock getBlock(int x, int y) {
+		BlockState at = getBlockState(x, y);
+		if(at != null) {
+			return at.getBlock();
 		}
 		return null;
 	}

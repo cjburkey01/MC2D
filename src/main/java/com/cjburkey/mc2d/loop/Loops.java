@@ -1,5 +1,7 @@
 package com.cjburkey.mc2d.loop;
 
+import com.cjburkey.mc2d.MC2D;
+
 public final class Loops {
 	
 	public int FPS, UPS;
@@ -19,7 +21,7 @@ public final class Loops {
 	
 	public void start() {
 		gameLoop.start();
-		System.out.println("Loaded game.");
+		MC2D.getLogger().log("Loaded game.");
 		renderLoop.start();
 	}
 	

@@ -4,21 +4,33 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
+import com.cjburkey.mc2d.window.GLFWWindow;
 
 public final class Input {
 
 	private final Map<Integer, Boolean> toAdd = new ConcurrentHashMap<>();
 	private final Map<Integer, Boolean> current = new ConcurrentHashMap<>();
 	private final Collection<Integer> pressed = new ConcurrentLinkedQueue<>();
+	private final Vector2f cursorPos = new Vector2f();
 	
 	public void renderInit() {
-		GLFW.glfwSetKeyCallback(MC2D.INSTANCE.getWindow().getWindow(), (win, key, code, action, mods) -> {
+		final GLFWWindow window = MC2D.INSTANCE.getWindow();
+		GLFW.glfwSetKeyCallback(window.getWindow(), (win, key, code, action, mods) -> {
 			if(action == GLFW.GLFW_PRESS) {
 				onKeyPress(key);
 			} else if(action == GLFW.GLFW_RELEASE) {
 				onKeyRelease(key);
+			}
+		});
+		GLFW.glfwSetCursorPosCallback(window.getWindow(), (win, x, y) -> {
+			boolean inX = x >= 0.0d && x < window.getWindowSize().x;
+			boolean inY = y >= 0.0d && y < window.getWindowSize().y;
+			if(inX && inY) {
+				cursorPos.x = (float) x;
+				cursorPos.y = (float) y;
 			}
 		});
 	}
@@ -52,6 +64,10 @@ public final class Input {
 			}
 		}
 		return false;
+	}
+	
+	public Vector2f getCursorPosition() {
+		return cursorPos;
 	}
 	
 	private void onKeyPress(int key) {

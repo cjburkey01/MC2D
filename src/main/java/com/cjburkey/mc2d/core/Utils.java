@@ -46,6 +46,12 @@ public final class Utils {
 		return out;
 	}
 	
+	public static int clamp(int val, int min, int max) {
+		if(val < min) return min;
+		if(val > max) return max;
+		return val;
+	}
+	
 	public static float[] vector3fToFloats(List<Vector3f> v3s) {
 		float[] out = new float[v3s.size() * 3];
 		int i = 0;

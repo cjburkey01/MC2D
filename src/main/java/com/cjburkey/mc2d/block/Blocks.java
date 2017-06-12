@@ -5,11 +5,11 @@ import java.util.List;
 
 public final class Blocks {
 	
-	private static final List<IBlock> blocks = new ArrayList<IBlock>();
+	private static final List<ABlock> blocks = new ArrayList<ABlock>();
 	
-	public static IBlock blockStone;
-	public static IBlock blockDirt;
-	public static IBlock blockGrass;
+	public static ABlock blockStone;
+	public static ABlock blockDirt;
+	public static ABlock blockGrass;
 	
 	public static void loadBlocks() {
 		blockStone = new BlockBasic("block_stone");
@@ -21,8 +21,8 @@ public final class Blocks {
 		blocks.add(blockGrass);
 	}
 	
-	public static IBlock[] getBlocks() {
-		return blocks.toArray(new IBlock[blocks.size()]);
+	public static ABlock[] getBlocks() {
+		return blocks.toArray(new ABlock[blocks.size()]);
 	}
 	
 }
