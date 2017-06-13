@@ -68,7 +68,7 @@ public final class Renderer {
 		ShaderProgram.unbind();
 		
 		for(GameObject obj : objs) {
-			if(obj.getMesh() != null) {
+			if(obj != null && obj.getMesh() != null) {
 				if(obj.getMesh().useBasicShader()) {
 					basicShader.bind();
 					if(!obj.isMeshBuilt()) {

@@ -4,6 +4,7 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 import com.cjburkey.mc2d.block.ABlock;
 import com.cjburkey.mc2d.block.BlockState;
+import com.cjburkey.mc2d.world.World;
 
 public final class ChunkData {
 	
@@ -28,6 +29,10 @@ public final class ChunkData {
 				blocks[x][y] = new BlockState(this, block, getWorldCoordsForBlock(x, y));
 			}
 		}
+	}
+	
+	public void refresh(World world) {
+		world.reRenderChunk(chunkPos.x, chunkPos.y);
 	}
 	
 	public void removeBlock(int x, int y) {

@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.chunk.ChunkData;
-import com.cjburkey.mc2d.core.Utils;
 import com.cjburkey.mc2d.module.core.CoreModule;
 import com.cjburkey.mc2d.object.GameObject;
 import com.cjburkey.mc2d.object.Mesh;
@@ -43,7 +42,7 @@ public class GameObjectSelector extends GameObject {
 		Vector3f world = Renderer.instance.getTransform().screenCoordsToWorldCoords(MC2D.INSTANCE.getWindow(),
 				Renderer.instance.getCamera(), cursor.x, cursor.y);
 		world.z = -Transformation.NEAR;
-		Vector3f pos = Utils.getBlockPos(new Vector3f(world));
+		Vector3f pos = World.getBlockWorldPos(new Vector3f(world));
 		setPosition(pos);
 
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);

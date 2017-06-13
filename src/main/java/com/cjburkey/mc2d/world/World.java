@@ -7,8 +7,10 @@ import org.joml.Vector3f;
 import com.cjburkey.mc2d.block.BlockState;
 import com.cjburkey.mc2d.chunk.ChunkData;
 import com.cjburkey.mc2d.chunk.GameObjectChunk;
+import com.cjburkey.mc2d.gui.GameObjectChunkShow;
 import com.cjburkey.mc2d.module.core.CoreModule;
 import com.cjburkey.mc2d.render.Camera;
+import com.cjburkey.mc2d.render.Renderer;
 
 public final class World {
 	
@@ -22,8 +24,9 @@ public final class World {
 	 */
 	
 	private final Queue<ChunkData> generated = new ConcurrentLinkedQueue<>();
+	private final Queue<GameObjectChunkShow> outlines = new ConcurrentLinkedQueue<>();
 	private final Queue<GameObjectChunk> rendered = new ConcurrentLinkedQueue<>();
-	private final double actionRate = 500000000.0d;	// 1 second
+	private final double actionRate = 500000000.0d;	// 0.5 second
 	private long lastAction;
 	
 	private boolean running = false;
@@ -58,6 +61,7 @@ public final class World {
 	
 	private void doChunksAround(Vector3f pos, int radius) {
 		generateChunksAround(pos, radius);
+		reRenderChunksAround();
 		renderChunksAround(pos, radius);
 		deRenderChunksAround(pos, radius);
 	}
@@ -99,12 +103,18 @@ public final class World {
 	public BlockState getBlockAtWorldPos(Vector3f world) {
 		ChunkData at = getChunkAtWorldPos(world);
 		if(at != null) {
-			Vector2i worldBlock = worldCoordsToWorldBlock(world);
-			Vector2i worldChunk = at.getChunkWorldCoords();
-			Vector2i blockPos = worldBlock.sub(worldChunk);
-			return at.getBlockState(blockPos.x, blockPos.y);
+			Vector2i block = getInChunkBlockCoordsFromWorld(world);
+			return at.getBlockState(block.x, block.y);
 		}
 		return null;
+	}
+	
+	public Vector2i getInChunkBlockCoordsFromWorld(Vector3f world) {
+		ChunkData at = getChunkAtWorldPos(world);
+		Vector2i worldBlock = worldCoordsToWorldBlock(world);
+		Vector2i worldChunk = at.getChunkWorldCoords();
+		Vector2i blockPos = worldBlock.sub(worldChunk);
+		return blockPos;
 	}
 	
 	/*private void deGenerateChunk(int x, int y) {
@@ -119,6 +129,12 @@ public final class World {
 	}
 	
 	// -- RENDER -- //
+	
+	private void reRenderChunksAround() {
+		for(GameObjectChunk obj : rendered) {
+			obj.getChunk().refresh(this);
+		}
+	}
 	
 	private void renderChunksAround(Vector3f around, int radius) {
 		around = new Vector3f(around);
@@ -156,13 +172,10 @@ public final class World {
 	}
 	
 	public void reRenderChunk(int x, int y) {
-		GameObjectChunk chunk = getRenderedChunkAt(x, y);
-		if(chunk != null) {
-			rendered.remove(chunk);
-			chunk.createMesh();
-			chunk.generateMesh(false);
-			rendered.add(chunk);
-		}
+		Renderer.instance.runLater(() -> {
+			deRenderChunk(getRenderedChunkAt(x, y));
+			renderChunkAt(x, y);
+		});
 	}
 	
 	private void renderChunkAt(Vector2i vec) {
@@ -175,12 +188,26 @@ public final class World {
 			GameObjectChunk object = new GameObjectChunk(at);
 			rendered.add(object);
 			CoreModule.instance.addGameObject(object);
+			
+			GameObjectChunkShow chunkShow = new GameObjectChunkShow(at);
+			outlines.add(chunkShow);
+			CoreModule.instance.addGameObject(chunkShow);
 		}
 	}
 	
 	private void deRenderChunk(GameObjectChunk chunk) {
-		rendered.remove(chunk);
-		chunk.destroy();
+		if(chunk != null) {
+			ChunkData chunkData = chunk.getChunk();
+			for(GameObjectChunkShow gocs : outlines) {
+				if(gocs.getChunk().equals(chunkData)) {
+					CoreModule.instance.removeGameObject(gocs);
+					outlines.remove(gocs);
+				}
+			}
+			
+			rendered.remove(chunk);
+			chunk.destroy();
+		}
 	}
 	
 	public static Vector2i worldCoordsToChunk(Vector3f world) {
@@ -193,6 +220,13 @@ public final class World {
 		int x = (int) Math.floor(world.x / ChunkData.scale);
 		int y = (int) Math.floor(world.y / ChunkData.scale);
 		return new Vector2i(x, y);
+	}
+	
+	public static Vector3f getBlockWorldPos(Vector3f pos) {
+		float scale = ChunkData.scale;
+		float blockX = (float) Math.floor(pos.x / scale) * scale + scale / 2.0f;
+		float blockY = (float) Math.floor(pos.y / scale) * scale + scale / 2.0f;
+		return new Vector3f(blockX, blockY, ChunkData.chunkZ);
 	}
 	
 }

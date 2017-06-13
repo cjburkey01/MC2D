@@ -6,6 +6,7 @@ import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
 import com.cjburkey.mc2d.block.BlockState;
+import com.cjburkey.mc2d.block.Blocks;
 import com.cjburkey.mc2d.chunk.ChunkData;
 import com.cjburkey.mc2d.core.SemVer;
 import com.cjburkey.mc2d.gui.GameObjectSelector;
@@ -106,15 +107,17 @@ public final class CoreModule extends ICoreModule {
 			Transformation.scale += 2.5f;
 		}
 		
-		// TODO: FIX CHUNK CORNER BLOCK DESTRUCTION
 		if(input.isMouseHeld(KeyBinds.LEFT)) {
-			BlockState cursor = world.getBlockAtWorldPos(crosshair.getPosition());
-			if(cursor != null && cursor.getBlock() != null) {
-				Vector2i pos = cursor.getPosition();
-				Vector2i chunk = cursor.getChunk().getChunkCoords();
-				pos.sub(cursor.getChunk().getChunkCoords().mul(ChunkData.chunkSize));
-				cursor.getChunk().removeBlock(pos.x, pos.y);
-				renderer.runLater(() -> world.reRenderChunk(chunk.x, chunk.y));
+			Vector2i chunkPos = World.worldCoordsToChunk(crosshair.getPosition());
+			Vector2i blockPos = World.worldCoordsToWorldBlock(crosshair.getPosition());
+			blockPos.sub(new Vector2i(chunkPos).mul(ChunkData.chunkSize));
+			ChunkData chunkObject = world.getChunkAtWorldPos(crosshair.getPosition());
+			if(chunkObject != null) {
+				BlockState at = chunkObject.getBlockState(blockPos.x, blockPos.y);
+				if(at == null || at.getBlock() == null || !at.getBlock().equals(Blocks.blockGrass)) {
+					chunkObject.setBlock(blockPos.x, blockPos.y, Blocks.blockGrass);
+					chunkObject.refresh(world);
+				}
 			}
 		}
 		

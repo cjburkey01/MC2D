@@ -2,9 +2,9 @@ package com.cjburkey.mc2d.world;
 
 import org.joml.Vector2i;
 import com.cjburkey.mc2d.MC2D;
+import com.cjburkey.mc2d.block.ABlock;
 import com.cjburkey.mc2d.block.Blocks;
 import com.cjburkey.mc2d.chunk.ChunkData;
-import com.cjburkey.mc2d.block.ABlock;
 
 public final class Generation {
 	

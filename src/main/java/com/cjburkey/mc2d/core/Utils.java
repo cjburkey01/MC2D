@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import com.cjburkey.mc2d.MC2D;
-import com.cjburkey.mc2d.chunk.ChunkData;
 
 public final class Utils {
 	
@@ -51,13 +50,6 @@ public final class Utils {
 		if(val < min) return min;
 		if(val > max) return max;
 		return val;
-	}
-	
-	public static Vector3f getBlockPos(Vector3f pos) {
-		float scale = ChunkData.scale;
-		float blockX = (float) Math.floor(pos.x / scale) * scale + scale / 2.0f;
-		float blockY = (float) Math.floor(pos.y / scale) * scale + scale / 2.0f;
-		return new Vector3f(blockX, blockY, pos.z);
 	}
 	
 	public static float[] vector3fToFloats(List<Vector3f> v3s) {

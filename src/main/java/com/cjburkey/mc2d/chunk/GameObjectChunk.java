@@ -5,9 +5,6 @@ import com.cjburkey.mc2d.object.GameObject;
 
 public final class GameObjectChunk extends GameObject {
 	
-	private static final boolean doFading = true;
-	private static final int fadeTicks = 60;
-	
 	private ChunkData chunk;
 	
 	private boolean fadeIn = false;
@@ -27,34 +24,13 @@ public final class GameObjectChunk extends GameObject {
 	
 	public void render() {
 		if(mesh != null) {
-			if(doFading) {
-				if(fadeIn) {
-					fadeOut = false;
-					if(mesh.getOpacity() < 1.0f) {
-						mesh.setOpacity(mesh.getOpacity() + (1.0f / (float) fadeTicks));
-					} else {
-						mesh.setOpacity(1.0f);
-						fadeIn = false;
-					}
-				} else if(fadeOut) {
-					fadeIn = false;
-					if(mesh.getOpacity() > 0.0f) {
-						mesh.setOpacity(mesh.getOpacity() - (1.0f / (float) fadeTicks));
-					} else {
-						mesh.setOpacity(0.0f);
-						fadeOut = false;
-						remove();
-					}
-				}
-			} else {
-				if(fadeIn) {
-					fadeIn = false;
-				} else if(fadeOut) {
-					fadeOut = false;
-					remove();
-				}
+			mesh.setOpacity(1.0f);
+			if(fadeIn) {
+				fadeIn = false;
+			} else if(fadeOut) {
+				fadeOut = false;
+				remove();
 			}
-			
 			super.render();
 		}
 	}
