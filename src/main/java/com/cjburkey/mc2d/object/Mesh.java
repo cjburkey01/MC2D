@@ -11,7 +11,7 @@ import com.cjburkey.mc2d.render.Texture;
 
 public final class Mesh {
 	
-	private final boolean outline = false;
+	private final boolean basicShader;
 	private final int vertCount;
 	private final float[] verts;
 	private final float[] uvs;
@@ -25,7 +25,8 @@ public final class Mesh {
 	private float opacity;
 	private Texture texture;
 	
-	public Mesh(float[] verts, float[] uvs, int[] tris, Texture texture) {
+	public Mesh(boolean basic, float[] verts, float[] uvs, int[] tris, Texture texture) {
+		basicShader = basic;
 		vertCount = tris.length;
 		this.verts = verts;
 		this.uvs = uvs;
@@ -122,8 +123,8 @@ public final class Mesh {
 		return built;
 	}
 	
-	public boolean isOutline() {
-		return outline;
+	public boolean useBasicShader() {
+		return basicShader;
 	}
 	
 }

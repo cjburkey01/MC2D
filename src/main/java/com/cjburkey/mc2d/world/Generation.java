@@ -9,13 +9,10 @@ import com.cjburkey.mc2d.block.ABlock;
 public final class Generation {
 	
 	private static final int grassHeight = 4;
-	private static final double scale = 20.0d;
-	private static final double yBase = 5.0d;
-	private static final double amplitude = 7.5d;
 	private static NoiseMaker noise;
 	
 	private static void init() {
-		noise = new NoiseMaker();
+		noise = new NoiseMaker(0);
 		MC2D.getLogger().log("Seed: " + noise.getSeed());
 	}
 	
@@ -48,7 +45,7 @@ public final class Generation {
 		if(noise == null) {
 			init();
 		}
-		double gened = noise.noise(x, y, scale, yBase, amplitude);
+		double gened = noise.noise(x, y);
 		if(gened >= 0.2d) {
 			return Blocks.blockStone;
 		}

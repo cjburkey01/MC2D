@@ -4,18 +4,67 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import com.cjburkey.mc2d.block.BlockState;
 import com.cjburkey.mc2d.chunk.ChunkData;
 import com.cjburkey.mc2d.chunk.GameObjectChunk;
 import com.cjburkey.mc2d.module.core.CoreModule;
+import com.cjburkey.mc2d.render.Camera;
 
 public final class World {
 	
+	/*
+	 * COORDS:
+	 *   3D WORLD:				The OpenGL coords of an object.
+	 *   CHUNK COORDS:			The position of an object in the grid of chunks.
+	 *   BLOCK COORDS:			The position of a block relative to its parent chunk.
+	 *   BLOCK WORLD COORDS:	The position of a block relative to 0,0 of the world.
+	 * 
+	 */
+	
 	private final Queue<ChunkData> generated = new ConcurrentLinkedQueue<>();
 	private final Queue<GameObjectChunk> rendered = new ConcurrentLinkedQueue<>();
+	private final double actionRate = 500000000.0d;	// 1 second
+	private long lastAction;
+	
+	private boolean running = false;
+	
+	public void startGenerating(Camera cam, int radius) {
+		Thread thread = new Thread(() -> {
+			running = true;
+			while(running) {
+				long now = System.nanoTime();
+				if(now - lastAction >= actionRate) {
+					lastAction = now;
+					doChunksAround(cam.getPosition(), radius);
+				}
+			}
+		});
+		thread.start();
+	}
+	
+	public void cleanup() {
+		stopGenerating();
+		for(ChunkData chunk : generated) {
+			remove(chunk);
+		}
+		for(GameObjectChunk chunk : rendered) {
+			deRenderChunk(chunk);
+		}
+	}
+	
+	private void stopGenerating() {
+		running = false;
+	}
+	
+	private void doChunksAround(Vector3f pos, int radius) {
+		generateChunksAround(pos, radius);
+		renderChunksAround(pos, radius);
+		deRenderChunksAround(pos, radius);
+	}
 	
 	// -- GENERATE -- //
 	
-	public void generateChunksAround(Vector3f pos, int radius) {
+	private void generateChunksAround(Vector3f pos, int radius) {
 		Vector2i chunk = worldCoordsToChunk(pos);
 		for(int x = chunk.x - radius; x <= chunk.x + radius; x ++) {
 			for(int y = chunk.y - radius; y <= chunk.y + radius; y ++) {
@@ -42,16 +91,36 @@ public final class World {
 		}
 	}
 	
+	public ChunkData getChunkAtWorldPos(Vector3f world) {
+		Vector2i chunk = worldCoordsToChunk(world);
+		return getGeneratedChunkAt(chunk.x, chunk.y);
+	}
+	
+	public BlockState getBlockAtWorldPos(Vector3f world) {
+		ChunkData at = getChunkAtWorldPos(world);
+		if(at != null) {
+			Vector2i worldBlock = worldCoordsToWorldBlock(world);
+			Vector2i worldChunk = at.getChunkWorldCoords();
+			Vector2i blockPos = worldBlock.sub(worldChunk);
+			return at.getBlockState(blockPos.x, blockPos.y);
+		}
+		return null;
+	}
+	
 	/*private void deGenerateChunk(int x, int y) {
 		ChunkData chunk = getGeneratedChunkAt(x, y);
 		if(chunk != null) {
-			generated.remove(chunk);
+			remove(chunk);
 		}
 	}*/
 	
+	private void remove(ChunkData chunk) {
+		generated.remove(chunk);
+	}
+	
 	// -- RENDER -- //
 	
-	public void renderChunksAround(Vector3f around, int radius) {
+	private void renderChunksAround(Vector3f around, int radius) {
 		around = new Vector3f(around);
 		around.z = ChunkData.chunkZ;
 		for(ChunkData chunk : generated) {
@@ -64,7 +133,7 @@ public final class World {
 		}
 	}
 	
-	public void deRenderChunksAround(Vector3f around, int radius) {
+	private void deRenderChunksAround(Vector3f around, int radius) {
 		around = new Vector3f(around);
 		around.z = ChunkData.chunkZ;
 		for(GameObjectChunk object : rendered) {
@@ -91,6 +160,7 @@ public final class World {
 		if(chunk != null) {
 			rendered.remove(chunk);
 			chunk.createMesh();
+			chunk.generateMesh(false);
 			rendered.add(chunk);
 		}
 	}
@@ -116,6 +186,12 @@ public final class World {
 	public static Vector2i worldCoordsToChunk(Vector3f world) {
 		int x = (int) Math.floor(world.x / ChunkData.scaleAndSize);
 		int y = (int) Math.floor(world.y / ChunkData.scaleAndSize);
+		return new Vector2i(x, y);
+	}
+	
+	public static Vector2i worldCoordsToWorldBlock(Vector3f world) {
+		int x = (int) Math.floor(world.x / ChunkData.scale);
+		int y = (int) Math.floor(world.y / ChunkData.scale);
 		return new Vector2i(x, y);
 	}
 	

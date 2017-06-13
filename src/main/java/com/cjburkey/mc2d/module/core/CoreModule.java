@@ -2,15 +2,18 @@ package com.cjburkey.mc2d.module.core;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import com.cjburkey.mc2d.MC2D;
+import com.cjburkey.mc2d.block.BlockState;
+import com.cjburkey.mc2d.chunk.ChunkData;
 import com.cjburkey.mc2d.core.SemVer;
+import com.cjburkey.mc2d.gui.GameObjectSelector;
 import com.cjburkey.mc2d.input.Input;
 import com.cjburkey.mc2d.input.KeyBinds;
-import com.cjburkey.mc2d.object.CameraController;
 import com.cjburkey.mc2d.object.GameObject;
-import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.object.Transformation;
+import com.cjburkey.mc2d.render.CameraController;
 import com.cjburkey.mc2d.render.Renderer;
 import com.cjburkey.mc2d.render.TextureAtlas;
 import com.cjburkey.mc2d.world.World;
@@ -27,14 +30,18 @@ public final class CoreModule extends ICoreModule {
 	private final CameraController camControl;
 	private final World world;
 	
+	private final GameObjectSelector crosshair;
+	
 	public CoreModule() {
 		instance = this;
 		input = new Input();
 		renderer = new Renderer();
 		gameObjs = new ConcurrentLinkedQueue<>();
 		atlas = new TextureAtlas();
-		camControl = new CameraController(1.0f, renderer.getCamera());
+		camControl = new CameraController(5.0f, renderer.getCamera());
 		world = new World();
+		
+		crosshair = new GameObjectSelector();
 	}
 	
 	public String getName() {
@@ -65,6 +72,9 @@ public final class CoreModule extends ICoreModule {
 		KeyBinds.addKeyBind("down", GLFW.GLFW_KEY_S);
 		KeyBinds.addKeyBind("in", GLFW.GLFW_KEY_UP);
 		KeyBinds.addKeyBind("out", GLFW.GLFW_KEY_DOWN);
+		
+		world.startGenerating(renderer.getCamera(), chunkRange);
+		addGameObject(crosshair);
 	}
 	
 	public void onLogicTick() {
@@ -96,13 +106,23 @@ public final class CoreModule extends ICoreModule {
 			Transformation.scale += 2.5f;
 		}
 		
-		chunkGen();
+		// TODO: FIX CHUNK CORNER BLOCK DESTRUCTION
+		if(input.isMouseHeld(KeyBinds.LEFT)) {
+			BlockState cursor = world.getBlockAtWorldPos(crosshair.getPosition());
+			if(cursor != null && cursor.getBlock() != null) {
+				Vector2i pos = cursor.getPosition();
+				Vector2i chunk = cursor.getChunk().getChunkCoords();
+				pos.sub(cursor.getChunk().getChunkCoords().mul(ChunkData.chunkSize));
+				cursor.getChunk().removeBlock(pos.x, pos.y);
+				renderer.runLater(() -> world.reRenderChunk(chunk.x, chunk.y));
+			}
+		}
 		
 		input.tick();
 	}
 	
 	public void onLogicCleanup() {
-		
+		world.cleanup();
 	}
 	
 	public void onRenderInit() {
@@ -130,9 +150,7 @@ public final class CoreModule extends ICoreModule {
 	
 	public void removeGameObject(GameObject obj) {
 		gameObjs.remove(obj);
-		for(Mesh m : obj.getMesh()) {
-			renderer.runLater(() -> m.cleanup());
-		}
+		renderer.runLater(() -> obj.cleanup());
 	}
 	
 	public TextureAtlas getTextures() {
@@ -143,10 +161,8 @@ public final class CoreModule extends ICoreModule {
 		return input;
 	}
 	
-	private void chunkGen() {
-		world.generateChunksAround(renderer.getCamera().getPosition(), chunkRange);
-		world.renderChunksAround(renderer.getCamera().getPosition(), chunkRange);
-		world.deRenderChunksAround(renderer.getCamera().getPosition(), chunkRange);
+	public World getWorld() {
+		return world;
 	}
 	
 }

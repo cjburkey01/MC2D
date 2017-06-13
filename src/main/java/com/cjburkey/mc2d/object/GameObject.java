@@ -1,10 +1,13 @@
 package com.cjburkey.mc2d.object;
 
 import org.joml.Vector3f;
+import com.cjburkey.mc2d.render.Renderer;
+import com.cjburkey.mc2d.render.ShaderProgram;
 
 public class GameObject {
 	
 	protected Mesh mesh;
+	private ShaderProgram shader;
 	private final Vector3f position;
 	private float scale;
 	private final Vector3f rotation;
@@ -14,6 +17,7 @@ public class GameObject {
 		position = new Vector3f(0, 0, 0);
 		scale = 1;
 		rotation = new Vector3f(0, 0, 0);
+		this.shader = Renderer.instance.getBlockShader();
 	}
 
 	public GameObject(Mesh mesh) {
@@ -65,6 +69,10 @@ public class GameObject {
 		cleanup();
 		this.mesh = mesh;
 	}
+	
+	public void setShader(ShaderProgram shader) {
+		this.shader = shader;
+	}
 
 	public Vector3f getPosition() {
 		return position;
@@ -78,8 +86,12 @@ public class GameObject {
 		return rotation;
 	}
 	
-	public Mesh[] getMesh() {
-		return new Mesh[] { mesh };
+	public Mesh getMesh() {
+		return mesh;
+	}
+	
+	public ShaderProgram getShaderProgram() {
+		return shader;
 	}
 	
 	public boolean isMeshBuilt() {

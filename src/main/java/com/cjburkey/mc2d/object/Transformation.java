@@ -7,9 +7,9 @@ import com.cjburkey.mc2d.window.GLFWWindow;
 
 public final class Transformation {
 	
-	private static final float NEAR = 0.01f;
-	private static final float FAR = 1000.0f;
-	public static float scale = 50.0f;
+	public static final float NEAR = 0.01f;
+	public static final float FAR = 1000.0f;
+	public static float scale = 100.0f;
 	
 	private final Matrix4f projectionMatrix;
 	private final Matrix4f viewMatrix;
@@ -21,11 +21,11 @@ public final class Transformation {
 		projectionMatrix = new Matrix4f();
 	}
 
-	public final Matrix4f getProjectionMatrix(float width, float height) {
+	public Matrix4f getProjectionMatrix(float width, float height) {
 		if(scale < 1.0f) scale = 1.0f;
 		projectionMatrix.identity();
 		projectionMatrix.ortho(-width / 2.0f, width / 2.0f, -height / 2.0f, height / 2.0f, NEAR, FAR);
-		projectionMatrix.scale(width * (1.0f / scale), width * (1.0f / scale), 1.0f);
+		projectionMatrix.scale(getScaleFactor(width), getScaleFactor(width), 1.0f);
 		return projectionMatrix;
 	}
 	
@@ -53,7 +53,7 @@ public final class Transformation {
 	
 	public Vector3f screenCoordsToWorldCoords(GLFWWindow window, Camera cam, double xP, double yP) {
 		float x = 2.0f * (float) xP / (float) window.getWindowSize().x - 1.0f;
-		float y = 2.0f * (float) yP / (float) window.getWindowSize().y - 1.0f;
+		float y = -(2.0f * (float) yP / (float) window.getWindowSize().y - 1.0f);
 		
 		Matrix4f projection = getProjectionMatrix(window.getWindowSize().x, window.getWindowSize().y);
 		Matrix4f view = getViewMatrix(cam);
@@ -62,6 +62,10 @@ public final class Transformation {
 		
 		Vector3f point = new Vector3f(x, y, 0);
 		return point.mulPosition(projectionView);
+	}
+	
+	private float getScaleFactor(float width) {
+		return (width * (1.0f / scale));
 	}
 	
 }

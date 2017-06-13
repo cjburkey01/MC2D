@@ -22,7 +22,11 @@ public final class ChunkData {
 	
 	public void setBlock(int x, int y, ABlock block) {
 		if(inChunk(x, y)) {
-			blocks[x][y] = new BlockState(block, getWorldCoordsForBlock(x, y));
+			if(block == null) {
+				blocks[x][y] = null;
+			} else {
+				blocks[x][y] = new BlockState(this, block, getWorldCoordsForBlock(x, y));
+			}
 		}
 	}
 	
@@ -55,6 +59,10 @@ public final class ChunkData {
 	
 	public Vector3f getWorldCoords() {
 		return new Vector3f(chunkPos.x * scaleAndSize, chunkPos.y * scaleAndSize, chunkZ);
+	}
+	
+	public Vector2i getChunkWorldCoords() {
+		return new Vector2i(chunkPos.x * chunkSize, chunkPos.y * chunkSize);
 	}
 	
 	public Vector2i getWorldCoordsForBlock(int x, int y) {

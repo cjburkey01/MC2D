@@ -12,13 +12,11 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 public final class Texture {
 	
+	private static Texture missingTexture;
+	
 	private PNGDecoder png;
 	private boolean isLoaded = false;
 	private int textureId;
-	
-	private static Texture getDefaultTexture() {
-		return getTexture("mc2d:texture/basic/missing.png");
-	}
 	
 	public static Texture getTexture(String loc) {
 		return getTexture(Resource.getStream(loc));
@@ -35,6 +33,13 @@ public final class Texture {
 			}
 		}
 		return getDefaultTexture();
+	}
+	
+	public static Texture getDefaultTexture() {
+		if(missingTexture == null) {
+			missingTexture = getTexture("mc2d:texture/basic/missing.png");
+		}
+		return missingTexture;
 	}
 	
 	public void load() {

@@ -10,7 +10,7 @@ import com.cjburkey.mc2d.core.Utils;
 import com.cjburkey.mc2d.object.Mesh;
 import com.cjburkey.mc2d.render.TextureAtlas;
 
-public final class ChunkMeshGenerator {
+public final class ChunkMeshCreator {
 	
 	public static final float blockSize = 1.0f;
 	
@@ -29,11 +29,10 @@ public final class ChunkMeshGenerator {
 				}
 			}
 		}
-		return new Mesh(Utils.vector3fToFloats(verts), Utils.vector2fToFloats(uvs), Utils.intToInts(tris), atlas.getTexture());
+		return new Mesh(false, Utils.vector3fToFloats(verts), Utils.vector2fToFloats(uvs), Utils.intToInts(tris), atlas.getTexture());
 	}
 	
 	private static void addBlock(ABlock block, int x, int y, List<Vector3f> verts, List<Vector2f> uvs, List<Integer> tris, TextureAtlas atlas) {
-		final boolean rev = true;
 		final int index = verts.size();
 		Vector3f corner = new Vector3f(x, y, 0.0f);
 		
@@ -52,21 +51,12 @@ public final class ChunkMeshGenerator {
 		verts.add(i2);
 		verts.add(i3);
 		
-		if(rev) {
-			tris.add(index + 0);
-			tris.add(index + 1);
-			tris.add(index + 2);
-			tris.add(index + 2);
-			tris.add(index + 3);
-			tris.add(index + 0);
-		} else {
-			tris.add(index + 1);
-			tris.add(index + 0);
-			tris.add(index + 2);
-			tris.add(index + 3);
-			tris.add(index + 2);
-			tris.add(index + 0);
-		}
+		tris.add(index + 0);
+		tris.add(index + 1);
+		tris.add(index + 2);
+		tris.add(index + 2);
+		tris.add(index + 3);
+		tris.add(index + 0);
 		
 		final Vector2i forBlock = atlas.getBlock(block);
 		final float atlasStep = 1.0f / (float) atlas.getSize();

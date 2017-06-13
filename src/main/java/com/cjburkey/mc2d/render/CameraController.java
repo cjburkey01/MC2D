@@ -1,6 +1,4 @@
-package com.cjburkey.mc2d.object;
-
-import com.cjburkey.mc2d.render.Camera;
+package com.cjburkey.mc2d.render;
 
 public final class CameraController {
 	

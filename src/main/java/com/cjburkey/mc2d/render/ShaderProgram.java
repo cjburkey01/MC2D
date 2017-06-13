@@ -55,7 +55,7 @@ public final class ShaderProgram {
 		try(MemoryStack stack = MemoryStack.stackPush()) {
 			FloatBuffer buff = stack.mallocFloat(3);
 			value.get(buff);
-			GL20.glUniformMatrix4fv(uniforms.get(name), false, buff);
+			GL20.glUniform3fv(uniforms.get(name), buff);
 		}
 	}
 	

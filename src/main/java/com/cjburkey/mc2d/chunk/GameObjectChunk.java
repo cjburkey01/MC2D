@@ -1,6 +1,5 @@
 package com.cjburkey.mc2d.chunk;
 
-import org.lwjgl.opengl.GL11;
 import com.cjburkey.mc2d.module.core.CoreModule;
 import com.cjburkey.mc2d.object.GameObject;
 
@@ -23,7 +22,7 @@ public final class GameObjectChunk extends GameObject {
 	}
 	
 	public void createMesh() {
-		setMesh(ChunkMeshGenerator.generateChunkMesh(chunk, CoreModule.instance.getTextures()));
+		setMesh(ChunkMeshCreator.generateChunkMesh(chunk, CoreModule.instance.getTextures()));
 	}
 	
 	public void render() {
@@ -56,17 +55,20 @@ public final class GameObjectChunk extends GameObject {
 				}
 			}
 			
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			super.render();
-			GL11.glDisable(GL11.GL_BLEND);
+		}
+	}
+	
+	public void generateMesh(boolean fadeIn) {
+		super.generateMesh();
+		this.fadeIn = fadeIn;
+		if(fadeIn) {
+			mesh.setOpacity(0.0f);
 		}
 	}
 	
 	public void generateMesh() {
-		super.generateMesh();
-		fadeIn = true;
-		mesh.setOpacity(0.0f);
+		generateMesh(true);
 	}
 	
 	public ChunkData getChunk() {

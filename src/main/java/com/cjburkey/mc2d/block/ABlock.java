@@ -12,4 +12,8 @@ public abstract class ABlock {
 		return new AABB(world.x, world.y, world.x + 1, world.y + 1);
 	}
 	
+	public final String toString() {
+		return getUnlocalizedName();
+	}
+	
 }
